@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Application.h"
-
 #ifdef NT_PLATFORM_WINDOWS
+
+#include "Application.h"
 
 extern Nest::Application* Nest::createApplication();
 

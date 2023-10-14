@@ -1,0 +1,3 @@
+[submodule "NestEngine/vendor/CHCL"]
+	path = NestEngine/vendor/CHCL
+	url = https://github.com/SownGryphon/CHCL

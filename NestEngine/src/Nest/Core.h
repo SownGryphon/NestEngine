@@ -1,7 +1,7 @@
 #pragma once
 
-#ifdef NT_PLATFORM_WINDOWS
-	#ifdef NT_BUILD_DLL
+#ifdef NE_PLATFORM_WINDOWS
+	#ifdef NE_BUILD_DLL
 		#define NEST_API __declspec(dllexport)
 	#else
 		#define NEST_API __declspec(dllexport)
