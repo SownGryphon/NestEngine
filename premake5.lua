@@ -4,23 +4,12 @@ workspace "NestEngine"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
-project "CHCL"
-	kind "StaticLib"
-	language "C++"
+IncludeDir = {}
+IncludeDir["CHCL"] = "NestEngine/vendor/CHCL/CHCL/src"
+IncludeDir["GLFW"] = "NestEngine/vendor/GLFW/include"
 
-	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
-
-	files
-	{
-		"CHCL/src/**.h",
-		"CHCL/src/**.cpp"
-	}
-
-	filter "system:windows"
-		cppdialect "C++20"
-		staticruntime "On"
-		systemversion "latest"
+include "NestEngine/vendor/CHCL/CHCL"
+include "NestEngine/vendor/GLFW"
 
 project "NestEngine"
 	location "NestEngine"
@@ -38,7 +27,9 @@ project "NestEngine"
 
 	includedirs
 	{
-		"%{prj.name}/vendor/CHCL/Custom Helper Class Library/src"
+		"%{prj.name}/vendor/CHCL/Custom Helper Class Library/src",
+		"%{IncludeDir.CHCL}",
+		"%{IncludeDir.GLFW}"
 	}
 
 	links

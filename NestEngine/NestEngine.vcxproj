@@ -59,7 +59,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>NE_PLATFORM_WINDOWS;NE_BUILD_DLL;NE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>vendor\CHCL\Custom Helper Class Library\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>vendor\CHCL\Custom Helper Class Library\src;vendor\CHCL\CHCL\src;vendor\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -80,7 +80,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>NE_PLATFORM_WINDOWS;NE_BUILD_DLL;NE_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>vendor\CHCL\Custom Helper Class Library\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>vendor\CHCL\Custom Helper Class Library\src;vendor\CHCL\CHCL\src;vendor\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -112,7 +112,7 @@
     <ClCompile Include="src\Nest\Application.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CHCL.vcxproj">
+    <ProjectReference Include="vendor\CHCL\CHCL\CHCL.vcxproj">
       <Project>{1F08837C-0B3F-840D-B42B-6A10A041000F}</Project>
     </ProjectReference>
   </ItemGroup>

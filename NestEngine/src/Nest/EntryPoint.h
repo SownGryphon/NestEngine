@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef NT_PLATFORM_WINDOWS
+#ifdef NE_PLATFORM_WINDOWS
 
 #include "Application.h"
 
