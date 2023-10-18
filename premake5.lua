@@ -7,13 +7,15 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 IncludeDir = {}
 IncludeDir["CHCL"] = "NestEngine/vendor/CHCL/CHCL/src"
 IncludeDir["GLFW"] = "NestEngine/vendor/GLFW/include"
+IncludeDir["Glad"] = "NestEngine/vendor/Glad/include"
 
 include "NestEngine/vendor/CHCL/CHCL"
 include "NestEngine/vendor/GLFW"
+include "NestEngine/vendor/Glad"
 
 project "NestEngine"
 	location "NestEngine"
-	kind "SharedLib"
+	kind "StaticLib"
 	language "C++"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
@@ -27,14 +29,22 @@ project "NestEngine"
 
 	includedirs
 	{
-		"%{prj.name}/vendor/CHCL/Custom Helper Class Library/src",
 		"%{IncludeDir.CHCL}",
-		"%{IncludeDir.GLFW}"
+		"%{IncludeDir.GLFW}",
+		"%{IncludeDir.Glad}"
 	}
 
 	links
 	{
-		"CHCL"
+		"CHCL",
+		"GLFW",
+		"Glad",
+		"opengl32.lib"
+	}
+
+	defines
+	{
+		"GLFW_INCLUDE_NONE"
 	}
 
 	filter "system:windows"
@@ -44,8 +54,7 @@ project "NestEngine"
 
 		defines
 		{
-			"NE_PLATFORM_WINDOWS",
-			"NE_BUILD_DLL"
+			"NE_PLATFORM_WINDOWS"
 		}
 
 		postbuildcommands
@@ -54,7 +63,7 @@ project "NestEngine"
 		}
 
 	filter "configurations:Debug"
-		defines "NE_DEBUG"
+		defines { "NE_DEBUG", "NE_ENABLE_ASSERTS" }
 		symbols "On"
 
 	filter "configurations:Release"
@@ -77,11 +86,18 @@ project "Sandbox"
 
 	includedirs
 	{
+		"%{IncludeDir.CHCL}",
+		"%{IncludeDir.GLFW}",
+		"%{IncludeDir.Glad}",
 		"NestEngine/src"
 	}
 
 	links
 	{
+		"CHCL",
+		"GLFW",
+		"Glad",
+		"opengl32.lib",
 		"NestEngine"
 	}
 

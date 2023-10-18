@@ -1,16 +1,21 @@
 #pragma once
 
+#include <memory>
+
 #include "Core.h"
+#include "Window.h"
 
 namespace Nest
 {
-	class NEST_API Application
+	class Application
 	{
 	public:
 		Application();
 		virtual ~Application();
 
-		void run();
+		virtual void run();
+	protected:
+		std::unique_ptr<Window> m_window;
 	};
 
 	// To be defined in client

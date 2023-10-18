@@ -4,6 +4,12 @@
     <Filter Include="Nest">
       <UniqueIdentifier>{FF91897C-EBC8-8A0D-94B5-701080CB060F}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Nest\graphics">
+      <UniqueIdentifier>{3FA5914C-AB65-0D83-74A0-5600E01F525F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Nest\log">
+      <UniqueIdentifier>{70190CEB-5CE6-66F6-85FF-549E712B9C84}</UniqueIdentifier>
+    </Filter>
     <Filter Include="platform">
       <UniqueIdentifier>{4A63C33C-3630-1E48-5F49-0CF04B7553D6}</UniqueIdentifier>
     </Filter>
@@ -25,6 +31,33 @@
     <ClInclude Include="src\Nest\Window.h">
       <Filter>Nest</Filter>
     </ClInclude>
+    <ClInclude Include="src\Nest\graphics\IndexBuffer.h">
+      <Filter>Nest\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Nest\graphics\OrthograhicCamera.h">
+      <Filter>Nest\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Nest\graphics\Renderer.h">
+      <Filter>Nest\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Nest\graphics\Renderer2D.h">
+      <Filter>Nest\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Nest\graphics\Shader.h">
+      <Filter>Nest\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Nest\graphics\VertexArray.h">
+      <Filter>Nest\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Nest\graphics\VertexBuffer.h">
+      <Filter>Nest\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Nest\graphics\VertexBufferLayout.h">
+      <Filter>Nest\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Nest\log\Logger.h">
+      <Filter>Nest\log</Filter>
+    </ClInclude>
     <ClInclude Include="src\platform\Windows\WindowsWindow.h">
       <Filter>platform\Windows</Filter>
     </ClInclude>
@@ -32,6 +65,36 @@
   <ItemGroup>
     <ClCompile Include="src\Nest\Application.cpp">
       <Filter>Nest</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Nest\graphics\IndexBuffer.cpp">
+      <Filter>Nest\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Nest\graphics\OrthograhicCamera.cpp">
+      <Filter>Nest\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Nest\graphics\Renderer.cpp">
+      <Filter>Nest\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Nest\graphics\Renderer2D.cpp">
+      <Filter>Nest\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Nest\graphics\Shader.cpp">
+      <Filter>Nest\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Nest\graphics\VertexArray.cpp">
+      <Filter>Nest\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Nest\graphics\VertexBuffer.cpp">
+      <Filter>Nest\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Nest\graphics\VertexBufferLayout.cpp">
+      <Filter>Nest\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Nest\log\Logger.cpp">
+      <Filter>Nest\log</Filter>
+    </ClCompile>
+    <ClCompile Include="src\platform\Windows\WindowsWindow.cpp">
+      <Filter>platform\Windows</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

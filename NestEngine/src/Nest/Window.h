@@ -15,7 +15,7 @@ namespace Nest
 			: title(title), width(width), height(height) {}
 	};
 
-	class NEST_API Window
+	class Window
 	{
 	public:
 		virtual ~Window() {}
@@ -24,6 +24,9 @@ namespace Nest
 
 		virtual unsigned int getWidth() const = 0;
 		virtual unsigned int getHeight() const = 0;
+
+		virtual void setVSync(bool enabled) = 0;
+		virtual bool isVSync() const = 0;
 
 		static Window* CreateWindow(const WindowProps &props = WindowProps());
 	};
