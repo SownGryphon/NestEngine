@@ -117,7 +117,7 @@ namespace Nest
 		int location = glGetUniformLocation(m_rendererID, name.c_str());
 		m_uniformLocations[name] = location;
 		if (location == -1)
-			NE_WARN("Uniform location for {} not found.");
+			NE_WARN("Uniform location for '{}' not found.", name);
 
 		return location;
 	}

@@ -68,12 +68,12 @@ namespace Nest
 			std::cout << "[GL ERROR " << code << "]: " << message << std::endl;
 		});
 
-		//glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-		//glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 		m_window = glfwCreateWindow(props.width, props.height, props.title.c_str(), NULL, NULL);
 		glfwMakeContextCurrent(m_window);
 		glfwSetWindowUserPointer(m_window, &m_winData);
+
+		NE_INFO("Created window {0} of size [{1}, {2}].", props.title, props.width, props.height);
 
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 		NE_ASSERT(status, "GLAD init failed.");

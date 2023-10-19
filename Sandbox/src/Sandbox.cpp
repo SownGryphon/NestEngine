@@ -56,6 +56,8 @@ public:
 
 	void draw()
 	{
+		shader->bind();
+		shader->setUniform1f("formatTest", 1.f);
 		Nest::Renderer::drawPoints(*shader, *va, boidCount);
 	}
 };

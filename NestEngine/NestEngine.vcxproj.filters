@@ -61,6 +61,7 @@
     <ClInclude Include="src\platform\Windows\WindowsWindow.h">
       <Filter>platform\Windows</Filter>
     </ClInclude>
+    <ClInclude Include="src\Nest\log\Formatter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Nest\Application.cpp">
