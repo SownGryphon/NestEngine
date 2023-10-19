@@ -33,6 +33,7 @@ namespace Nest
 		for (unsigned int i = 0; i < layout.size(); ++i)
 		{
 			glEnableVertexAttribArray(i);
+			glVertexAttribDivisor(i, layout[i].advanceCount);
 			glVertexAttribPointer(i, layout[i].count, layout[i].type, layout[i].normalized, vbLayout->getStride(), (void*)offset);
 			offset += layout[i].count * VertexBufferLayout::VBLayoutElement::GetSizeOfType(layout[i].type);
 		}

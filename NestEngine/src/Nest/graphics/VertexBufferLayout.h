@@ -14,6 +14,7 @@ namespace Nest
 		{
 			unsigned int type;
 			unsigned int count;
+			unsigned int advanceCount;
 			bool normalized;
 
 			static unsigned int GetSizeOfType(unsigned int type);
@@ -28,13 +29,13 @@ namespace Nest
 		inline const std::vector<VBLayoutElement>& getLayout() const { return m_layoutElements; }
 
 		template <typename T>
-		void push(unsigned int count)
+		void push(unsigned int count, unsigned int  = 0)
 		{
 			std::runtime_error(false);
 		}
 
-		template <> void push<float>(unsigned int count);
-		template <> void push<unsigned int>(unsigned int count);
-		template <> void push<unsigned char>(unsigned int count);
+		template <> void push<float>(unsigned int count, unsigned int advanceCount);
+		template <> void push<unsigned int>(unsigned int count, unsigned int advanceCount);
+		template <> void push<unsigned char>(unsigned int count, unsigned int advanceCount);
 	};
 }

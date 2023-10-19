@@ -18,6 +18,7 @@ namespace Nest
 
 	public:
 		Shader();
+		Shader(const std::string &filepath);
 		Shader(const std::string &vertexPath, const std::string &fragPath);
 		Shader(const Shader&) = delete;
 		Shader(Shader&&) = default;
@@ -40,6 +41,7 @@ namespace Nest
 		int getUniformLocation(const std::string &name);
 
 		static std::string ReadFile(const std::string &path);
+		static std::unordered_map<unsigned int, std::string> PreProcess(const std::string &source);
 		static unsigned int CompileShader(const std::string &source, unsigned int type);
 	};
 }

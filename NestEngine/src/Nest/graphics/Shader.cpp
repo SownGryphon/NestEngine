@@ -13,6 +13,42 @@ namespace Nest
 		m_rendererID = 0;
 	}
 
+	Shader::Shader(const std::string &filepath)
+	{
+		std::string source = ReadFile(filepath);
+		auto shaderSources = PreProcess(source);
+
+		m_rendererID = glCreateProgram();
+		std::vector<unsigned int> shaderIDs;
+		for (const auto &shaderSource : shaderSources)
+		{
+			unsigned int shader = CompileShader(shaderSource.second, shaderSource.first);
+			glAttachShader(m_rendererID, shader);
+			shaderIDs.push_back(shader);
+		}
+		glLinkProgram(m_rendererID);
+
+		int linked;
+		glGetProgramiv(m_rendererID, GL_LINK_STATUS, &linked);
+		if (linked == GL_FALSE)
+		{
+			int msgLen;
+			glGetProgramiv(m_rendererID, GL_INFO_LOG_LENGTH, &msgLen);
+			std::vector<GLchar> msg(msgLen);
+			glGetProgramInfoLog(m_rendererID, msgLen, &msgLen, msg.data());
+
+			glDeleteProgram(m_rendererID);
+
+			NE_ERROR(std::string(msg.data()));
+			NE_ASSERT(0, "Shader link failed.");
+		}
+
+		for (unsigned int i : shaderIDs)
+		{
+			glDeleteShader(i);
+		}
+	}
+
 	Shader::Shader(const std::string &vertexPath, const std::string &fragPath)
 	{
 		unsigned int vShader = CompileShader(ReadFile(vertexPath), GL_VERTEX_SHADER);
@@ -96,6 +132,43 @@ namespace Nest
 			result += '\n';
 		}
 		return result;
+	}
+
+	static unsigned int shaderTokenToType(const std::string &token)
+	{
+		if (token == "vertex")
+			return GL_VERTEX_SHADER;
+		if (token == "geometry")
+			return GL_GEOMETRY_SHADER;
+		if (token == "fragment" || token == "pixel")
+			return GL_FRAGMENT_SHADER;
+		if (token == "compute")
+			return GL_COMPUTE_SHADER;
+
+		NE_ASSERT(0, "Unidentified shader type.");
+		return 0;
+	}
+
+	std::unordered_map<unsigned int, std::string> Shader::PreProcess(const std::string &source)
+	{
+		std::unordered_map<unsigned int, std::string> shaderSources;
+
+		const char *typeToken = "#type";
+		size_t typeTokenLen = strlen(typeToken);
+		size_t pos = source.find(typeToken, 0);
+		while (pos != std::string::npos)
+		{
+			size_t eol = source.find_first_of("\n\r", pos);
+			size_t begin = pos + typeTokenLen + 1;
+			std::string type = source.substr(begin, eol - begin);
+
+			size_t nextLineBegin = source.find_first_not_of("\n\r", eol);
+			pos = source.find(typeToken, nextLineBegin);
+
+			shaderSources[shaderTokenToType(type)] = (pos == std::string::npos) ? source.substr(nextLineBegin) : source.substr(nextLineBegin, pos - nextLineBegin);
+		}
+
+		return shaderSources;
 	}
 
 	unsigned int Shader::CompileShader(const std::string &source, unsigned int type)

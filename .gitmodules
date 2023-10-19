@@ -3,4 +3,4 @@
 	url = https://github.com/SownGryphon/CHCL
 [submodule "NestEngine/vendor/GLFW"]
 	path = NestEngine/vendor/GLFW
-	url = https://github.com/TheCherno/GLFW
+	url = https://github.com/SownGryphon/glfw

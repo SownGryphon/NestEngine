@@ -37,12 +37,28 @@ namespace Nest
 			glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, 0);
 		}
 
+		void drawPoints(Shader &shader, const VertexArray &va, unsigned int count)
+		{
+			shader.bind();
+			shader.setUniformMat4("u_MVP", viewProjectionMatrix);
+			va.bind();
+			glDrawArrays(GL_POINTS, 0, count);
+		}
+
 		void drawLines(Shader &shader, const VertexArray &va, unsigned int vertices)
 		{
 			shader.bind();
 			shader.setUniformMat4("u_MVP", viewProjectionMatrix);
 			va.bind();
 			glDrawArrays(GL_LINES, 0, vertices);
+		}
+
+		void drawTriangles(Shader &shader, const VertexArray &va, unsigned int count)
+		{
+			shader.bind();
+			shader.setUniformMat4("u_MVP", viewProjectionMatrix);
+			va.bind();
+			glDrawArrays(GL_TRIANGLES, 0, 3 * count);
 		}
 	}
 }

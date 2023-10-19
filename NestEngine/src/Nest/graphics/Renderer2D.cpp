@@ -37,7 +37,7 @@ namespace Nest
 			};
 			Ref<VertexBuffer> squareVB = createRef<VertexBuffer>(8 * sizeof(float), positions);
 			Ref<VertexBufferLayout> vbl = createRef<VertexBufferLayout>();
-			vbl->push<float>(2);
+			vbl->push<float>(2, 0);
 			s_data->squareVertices->bindBuffers(squareVB, vbl);
 
 			unsigned int indices[6] = {
