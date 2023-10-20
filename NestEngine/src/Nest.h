@@ -2,15 +2,24 @@
 
 // For use by Nest Engine clients
 
-// ------ Entry Point ------
-#include "Nest/EntryPoint.h"
-// -------------------------
+#include "Nest/Core/Core.h"
 
-#include "Nest/Application.h"
+#include "Nest/Core/Window.h"
+#include "Nest/Core/Application.h"
+#include "Nest/Core/Layer.h"
+#include "Nest/Core/LayerStack.h"
+
+#include "Nest/Events/Event.h"
+#include "Nest/Events/KeyboardEvent.h"
+#include "Nest/Events/MouseEvent.h"
 
 // ----- Graphics ------
-#include "Nest/graphics/Shader.h"
-#include "Nest/graphics/VertexArray.h"
-#include "Nest/graphics/IndexBuffer.h"
-#include "Nest/graphics/Renderer.h"
-#include "Nest/graphics/Renderer2D.h"
+#include "Nest/Graphics/RenderCommand.h"
+#include "Nest/Graphics/Renderer.h"
+#include "Nest/Graphics/Renderer2D.h"
+
+#include "Nest/Graphics/Shader.h"
+#include "Nest/Graphics/VertexArray.h"
+#include "Nest/Graphics/IndexBuffer.h"
+
+#include "Nest/Graphics/OrthograhicCamera.h"

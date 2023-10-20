@@ -4,7 +4,7 @@
 
 #include <glad/glad.h>
 
-#include "../log/Logger.h"
+#include "Nest/Log/Logger.h"
 
 namespace Nest
 {

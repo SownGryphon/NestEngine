@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include "log/Logger.h"
+#include "Nest/Log/Logger.h"
 
 #ifdef NE_PLATFORM_WINDOWS
 #else
@@ -14,6 +14,10 @@
 #else
 	#define NE_ASSERT(x, ...)
 #endif
+
+#define BIT(x) (1 << (x))
+
+#define NE_BIND_EVENT_FN(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }
 
 namespace Nest
 {

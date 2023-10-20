@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../Nest/Window.h"
+#include "Nest/Core/Window.h"
 
 #include <GLFW/glfw3.h>
 
@@ -17,6 +17,7 @@ namespace Nest
 		unsigned int getWidth() const override;
 		unsigned int getHeight() const override;
 
+		inline void setEventCallback(const EventCallbackFn &func) override { m_winData.eventCallback = func; }
 		void setVSync(bool enabled) override;
 		bool isVSync() const override;
 	private:
@@ -30,6 +31,8 @@ namespace Nest
 			std::string title;
 			unsigned int width, height;
 			bool vSync;
+
+			EventCallbackFn eventCallback;
 		};
 
 		WindowData m_winData;

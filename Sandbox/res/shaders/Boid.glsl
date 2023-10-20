@@ -42,8 +42,8 @@ vec4 modelPoint(int index, mat2 rotationMat)
 void main()
 {
 	mat2 rotationMat = mat2(
-		cos(gs_in[0].rotation), -sin(gs_in[0].rotation),
-		sin(gs_in[0].rotation), cos(gs_in[0].rotation)
+		cos(gs_in[0].rotation), sin(gs_in[0].rotation),
+		-sin(gs_in[0].rotation), cos(gs_in[0].rotation)
 	);
 
 	gl_Position = modelPoint(0, rotationMat);

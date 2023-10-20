@@ -69,6 +69,12 @@ namespace Nest
 			return string;
 		}
 
+		template <>
+		std::string toString(const char *chars)
+		{
+			return std::string(chars);
+		}
+
 		template <unsigned int size, typename T>
 		std::string toString(chcl::VectorN<size, T> vec)
 		{

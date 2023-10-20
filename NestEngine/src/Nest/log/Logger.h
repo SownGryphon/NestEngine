@@ -15,12 +15,6 @@ namespace Nest
 			TRACE, INFO, WARNING, ERROR
 		};
 
-		static Formatter s_formatter;
-
-	private:
-		LogLevel m_logLevel;
-
-	public:
 		Logger(LogLevel level) : m_logLevel(level) {}
 
 		void setLevel(LogLevel level);
@@ -29,8 +23,15 @@ namespace Nest
 		void log(LogLevel level, const std::string &msg, Args... args)
 		{
 			if (level >= m_logLevel)
-				std::cout << s_formatter.format(msg, args...) << std::endl;
+				std::cout << GetLevelString(level) << s_formatter.format(msg, args...) << std::endl;
 		}
+
+	private:
+		LogLevel m_logLevel;
+
+		static Formatter s_formatter;
+
+		static std::string GetLevelString(LogLevel level);
 	};
 
 	extern Logger logger;

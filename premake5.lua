@@ -29,6 +29,7 @@ project "NestEngine"
 
 	includedirs
 	{
+		"%{prj.name}/src",
 		"%{IncludeDir.CHCL}",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}"
@@ -55,11 +56,6 @@ project "NestEngine"
 		defines
 		{
 			"NE_PLATFORM_WINDOWS"
-		}
-
-		postbuildcommands
-		{
-			("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Sandbox")
 		}
 
 	filter "configurations:Debug"

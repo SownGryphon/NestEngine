@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Core.h"
+#include "Nest/Core/Core.h"
 
 #include "VertexBuffer.h"
 #include "VertexBufferLayout.h"
@@ -18,6 +18,8 @@ namespace Nest
 		void unbind() const;
 
 		void bindBuffers(const Ref<VertexBuffer> &vBuffer, const Ref<VertexBufferLayout> &vbLayout);
+
+		inline Ref<VertexBuffer> getVertexBuffer() { return m_vBuffer; }
 
 	private:
 		unsigned int m_rendererID = 0;

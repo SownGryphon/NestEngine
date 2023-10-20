@@ -1,8 +1,10 @@
 #pragma once
 
+#include <functional>
 #include <string>
 
 #include "Core.h"
+#include "Nest/Events/Event.h"
 
 namespace Nest
 {
@@ -18,6 +20,8 @@ namespace Nest
 	class Window
 	{
 	public:
+		using EventCallbackFn = std::function<void(Event&)>;
+
 		virtual ~Window() {}
 
 		virtual void onUpdate() = 0;
@@ -25,6 +29,7 @@ namespace Nest
 		virtual unsigned int getWidth() const = 0;
 		virtual unsigned int getHeight() const = 0;
 
+		virtual void setEventCallback(const EventCallbackFn &func) = 0;
 		virtual void setVSync(bool enabled) = 0;
 		virtual bool isVSync() const = 0;
 

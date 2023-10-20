@@ -4,6 +4,10 @@
 
 #include <glad/glad.h>
 
+#include "Nest/Events/WindowEvent.h"
+#include "Nest/Events/MouseEvent.h"
+#include "Nest/Events/KeyboardEvent.h"
+
 namespace Nest
 {
 	static bool s_GLFWInitialized = false;
@@ -65,7 +69,7 @@ namespace Nest
 		}
 
 		glfwSetErrorCallback([](int code, const char *message) {
-			std::cout << "[GL ERROR " << code << "]: " << message << std::endl;
+			NE_ERROR("[GL ERROR {0}]: {1}", code, message);
 		});
 
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
@@ -79,6 +83,66 @@ namespace Nest
 		NE_ASSERT(status, "GLAD init failed.");
 
 		setVSync(true);
+
+		glfwSetWindowCloseCallback(m_window, [](GLFWwindow *window)
+		{
+			WindowData &data = *(WindowData*)glfwGetWindowUserPointer(window);
+			WindowCloseEvent closeEvent;
+			data.eventCallback(closeEvent);
+		});
+
+		glfwSetKeyCallback(m_window, [](GLFWwindow *window, int key, int, int action, int)
+		{
+			WindowData &data = *(WindowData*)glfwGetWindowUserPointer(window);
+			switch (action)
+			{
+				case GLFW_PRESS:
+				{
+					KeyPressedEvent pressEvent(key, 0);
+					data.eventCallback(pressEvent);
+					return;
+				}
+				case GLFW_REPEAT:
+				{
+					KeyPressedEvent repeatEvent(key, 1);
+					data.eventCallback(repeatEvent);
+					return;
+				}
+				case GLFW_RELEASE:
+				{
+					KeyReleasedEvent releaseEvent(key);
+					data.eventCallback(releaseEvent);
+					return;
+				}
+			}
+		});
+
+		glfwSetMouseButtonCallback(m_window, [](GLFWwindow *window, int button, int action, int)
+		{
+			WindowData &data = *(WindowData*)glfwGetWindowUserPointer(window);
+			switch (action)
+			{
+				case GLFW_PRESS:
+				{
+					MouseButtonPressedEvent pressEvent(button);
+					data.eventCallback(pressEvent);
+					return;
+				}
+				case GLFW_RELEASE:
+				{
+					MouseButtonReleasedEvent releaseEvent(button);
+					data.eventCallback(releaseEvent);
+					return;
+				}
+			}
+		});
+
+		glfwSetCursorPosCallback(m_window, [](GLFWwindow *window, double dx, double dy)
+		{
+			WindowData &data = *(WindowData*)glfwGetWindowUserPointer(window);
+			MouseMovedEvent moveEvent(dx, dy);
+			data.eventCallback(moveEvent);
+		});
 	}
 
 	void WindowsWindow::shutdown()

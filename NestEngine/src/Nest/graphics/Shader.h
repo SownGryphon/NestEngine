@@ -7,7 +7,7 @@
 #include <geometry/Vector2.h>
 #include <geometry/Vector4.h>
 
-#include "../Core.h"
+#include "Nest/Core/Core.h"
 
 namespace Nest
 {

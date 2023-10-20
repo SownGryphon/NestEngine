@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <vector>
 
-#include "../Core.h"
+#include "Nest/Core/Core.h"
 
 namespace Nest
 {
