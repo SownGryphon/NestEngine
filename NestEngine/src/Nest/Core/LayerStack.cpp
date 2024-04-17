@@ -14,6 +14,7 @@ namespace Nest
 	void LayerStack::pushLayer(Layer *layer)
 	{
 		m_layers.push_back(layer);
+		layer->onAttach();
 	}
 
 	void LayerStack::popLayer(Layer *layer)

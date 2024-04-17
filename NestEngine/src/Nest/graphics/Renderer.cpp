@@ -21,7 +21,7 @@ namespace Nest
 		Renderer2D::shutdown();
 	}
 
-	void Renderer::beginScene(const OrthograhicCamera &camera)
+	void Renderer::beginScene(const OrthographicCamera &camera)
 	{
 		viewProjectionMatrix = camera.getViewProjectionMatrix();
 	}

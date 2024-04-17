@@ -13,6 +13,14 @@
 #include "Nest/Events/KeyboardEvent.h"
 #include "Nest/Events/MouseEvent.h"
 
+#include "Nest/Core/KeyCodes.h"
+#include "Nest/Core/Input.h"
+#include "Nest/Graphics/OrthographicCameraController.h"
+
+// ------- Utils -------
+#include "Nest/Utils/Random.h"
+#include "Nest/Utils/Time.h"
+
 // ----- Graphics ------
 #include "Nest/Graphics/RenderCommand.h"
 #include "Nest/Graphics/Renderer.h"
@@ -22,4 +30,4 @@
 #include "Nest/Graphics/VertexArray.h"
 #include "Nest/Graphics/IndexBuffer.h"
 
-#include "Nest/Graphics/OrthograhicCamera.h"
+#include "Nest/Graphics/OrthographicCamera.h"

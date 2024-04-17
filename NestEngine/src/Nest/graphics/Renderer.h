@@ -2,7 +2,7 @@
 
 #include "Nest/Core/Core.h"
 
-#include "OrthograhicCamera.h"
+#include "OrthographicCamera.h"
 
 #include "Shader.h"
 #include "VertexArray.h"
@@ -15,7 +15,7 @@ namespace Nest
 		void init();
 		void shutdown();
 
-		void beginScene(const OrthograhicCamera &camera);
+		void beginScene(const OrthographicCamera &camera);
 
 		void drawIndexed(Shader &shader, const VertexArray &va, const IndexBuffer &ib);
 		void drawLinesIndexed(Shader &shader, const VertexArray &va, const IndexBuffer &ib);

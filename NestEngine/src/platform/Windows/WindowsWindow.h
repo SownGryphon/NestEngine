@@ -20,6 +20,8 @@ namespace Nest
 		inline void setEventCallback(const EventCallbackFn &func) override { m_winData.eventCallback = func; }
 		void setVSync(bool enabled) override;
 		bool isVSync() const override;
+		inline void* getNativeWindow() override { return m_window; }
+
 	private:
 		void init(const WindowProps &props);
 		void shutdown();

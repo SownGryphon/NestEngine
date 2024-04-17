@@ -40,7 +40,7 @@ namespace Nest
 		}
 
 		template <typename T, typename ...Args>
-		void format(std::string &string, T arg, Args... args)
+		void format(std::string &string, T arg, Args ...args)
 		{
 			format(string, arg);
 			++formatIndex;
@@ -49,7 +49,7 @@ namespace Nest
 		}
 
 		template <typename ...Args>
-		std::string format(const std::string &string, Args... args)
+		std::string format(const std::string &string, Args ...args)
 		{
 			std::string result = string;
 			format(result, args...);

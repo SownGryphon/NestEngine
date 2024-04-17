@@ -27,16 +27,17 @@ in VS_OUT
 } gs_in[];
 
 vec2 boidVertices[3] = vec2[3](
-	vec2(5, 0),
-	vec2(-3, 3),
-	vec2(-3, -3)
+	vec2(1, 0),
+	vec2(-0.6, 0.6),
+	vec2(-0.6, -0.6)
 );
 
 uniform mat4 u_MVP = mat4(1);
+uniform float u_boidSize = 3.f;
 
 vec4 modelPoint(int index, mat2 rotationMat)
 {
-	return u_MVP * (vec4(rotationMat * boidVertices[index], 0, 0) + gl_in[0].gl_Position);
+	return u_MVP * (vec4(rotationMat * (boidVertices[index] * u_boidSize), 0, 0) + gl_in[0].gl_Position);
 }
 
 void main()
@@ -58,9 +59,11 @@ void main()
 #type fragment
 #version 330 core
 
-out vec4 color;
+uniform vec4 u_color = vec4(1, 1, 1, 1);
+
+layout(location = 0) out vec4 color;
 
 void main()
 {
-	color = vec4(1, 1, 1, 1);
+	color = u_color;
 }

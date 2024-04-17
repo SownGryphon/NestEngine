@@ -1,8 +1,11 @@
 #include "Application.h"
 
+#include <chrono>
+
 #include <glad/glad.h>
 
 #include "Nest/Graphics/Renderer.h"
+#include "Nest/Utils/Time.h"
 
 namespace Nest
 {
@@ -32,12 +35,18 @@ namespace Nest
 
 	void Application::run()
 	{
+		std::chrono::milliseconds lastStepTime = Time::getTimeMillis();
+
 		while (m_running)
 		{
+			auto now = Time::getTimeMillis();
+
 			for (Layer *layer : m_layerStack)
-				layer->onUpdate();
+				layer->onUpdate(now - lastStepTime);
 
 			m_window->onUpdate();
+
+			lastStepTime = now;
 		}
 	}
 

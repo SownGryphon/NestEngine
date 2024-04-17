@@ -13,9 +13,8 @@ namespace Nest
 		m_rendererID = 0;
 	}
 
-	Shader::Shader(const std::string &filepath)
+	Shader::Shader(const std::string &source)
 	{
-		std::string source = ReadFile(filepath);
 		auto shaderSources = PreProcess(source);
 
 		m_rendererID = glCreateProgram();
@@ -49,10 +48,10 @@ namespace Nest
 		}
 	}
 
-	Shader::Shader(const std::string &vertexPath, const std::string &fragPath)
+	Shader::Shader(const std::string &vertexSource, const std::string &fragmentSource)
 	{
-		unsigned int vShader = CompileShader(ReadFile(vertexPath), GL_VERTEX_SHADER);
-		unsigned int fShader = CompileShader(ReadFile(fragPath), GL_FRAGMENT_SHADER);
+		unsigned int vShader = CompileShader(vertexSource, GL_VERTEX_SHADER);
+		unsigned int fShader = CompileShader(fragmentSource, GL_FRAGMENT_SHADER);
 
 		m_rendererID = glCreateProgram();
 		glAttachShader(m_rendererID, vShader);
@@ -67,6 +66,16 @@ namespace Nest
 	Shader::~Shader()
 	{
 		glDeleteProgram(m_rendererID);
+	}
+
+	Ref<Shader> Shader::FromFile(const std::string &sourcePath)
+	{
+		return createRef<Shader>(ReadFile(sourcePath));
+	}
+
+	Ref<Shader> Shader::FromFile(const std::string &vertPath, const std::string &fragPath)
+	{
+		return createRef<Shader>(ReadFile(vertPath), ReadFile(fragPath));
 	}
 
 	void Shader::bind() const
@@ -94,6 +103,16 @@ namespace Nest
 		glUniform2f(getUniformLocation(name), v.x, v.y);
 	}
 
+	void Shader::setUniform3f(const std::string &name, float v0, float v1, float v2)
+	{
+		glUniform3f(getUniformLocation(name), v0, v1, v2);
+	}
+
+	void Shader::setUniform3f(const std::string &name, chcl::Vector3<float> v)
+	{
+		glUniform3f(getUniformLocation(name), v.x, v.y, v.z);
+	}
+
 	void Shader::setUniform4f(const std::string &name, float v0, float v1, float v2, float v3)
 	{
 		glUniform4f(getUniformLocation(name), v0, v1, v2, v3);
@@ -102,6 +121,17 @@ namespace Nest
 	void Shader::setUniform4f(const std::string &name, chcl::Vector4<float> v)
 	{
 		glUniform4f(getUniformLocation(name), v.x, v.y, v.z, v.w);
+	}
+
+	void Shader::setUniform3fArr(const std::string &name, unsigned int count, std::vector<chcl::Vector3<float>>& arr)
+	{
+		// Vector position values are stored contiguously, so this is safe
+		glUniform3fv(getUniformLocation(name), count, (float*) arr.data());
+	}
+
+	void Shader::setUniformMat3(const std::string & name, const chcl::Mat3 &mat)
+	{
+		glUniformMatrix3fv(getUniformLocation(name), 1, true, mat.values());
 	}
 
 	void Shader::setUniformMat4(const std::string &name, const chcl::Mat4 &mat)
@@ -136,13 +166,13 @@ namespace Nest
 
 	static unsigned int shaderTokenToType(const std::string &token)
 	{
-		if (token == "vertex")
+		if (token == "vertex" || token == "vert")
 			return GL_VERTEX_SHADER;
-		if (token == "geometry")
+		if (token == "geometry" || token == "geo")
 			return GL_GEOMETRY_SHADER;
-		if (token == "fragment" || token == "pixel")
+		if (token == "fragment" || token == "frag" || token == "pixel")
 			return GL_FRAGMENT_SHADER;
-		if (token == "compute")
+		if (token == "compute" || token == "comp")
 			return GL_COMPUTE_SHADER;
 
 		NE_ASSERT(0, "Unidentified shader type.");
@@ -153,7 +183,7 @@ namespace Nest
 	{
 		std::unordered_map<unsigned int, std::string> shaderSources;
 
-		const char *typeToken = "#type";
+		const char *typeToken = "//#shader";
 		size_t typeTokenLen = strlen(typeToken);
 		size_t pos = source.find(typeToken, 0);
 		while (pos != std::string::npos)

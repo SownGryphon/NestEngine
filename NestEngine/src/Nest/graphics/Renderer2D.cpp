@@ -4,64 +4,93 @@
 #include <maths/SquareMatrix.h>
 
 #include "Nest/Core/Core.h"
+#include "Nest/Core/Application.h"
 
 #include "Nest/Graphics/Shader.h"
 #include "Nest/Graphics/VertexArray.h"
 #include "Nest/Graphics/IndexBuffer.h"
 #include "Nest/Graphics/RenderCommand.h"
 
+
+
 namespace Nest
 {
 	struct RendererData
 	{
-		Ref<Shader> quadShader;
-		Ref<VertexArray> squareVertices;
+		Ref<Shader> quadShader, circleShader;
+		Ref<VertexArray> squareVertices, lineVertices;
 		Ref<IndexBuffer> quadIndices, lineQuadIndices;
+		chcl::Vector2<unsigned int> windowSize;
 	};
 
-	RendererData *s_data;
+	RendererData *s_data = nullptr;
 
 	void Renderer2D::init()
 	{
-		s_data = new RendererData();
-		s_data->quadShader = createRef<Shader>("res/shaders/Basic.glsl.vertex", "res/shaders/Basic.glsl.fragment");
+		if (!s_data)
+		{
+			s_data = new RendererData();
 
-		s_data->squareVertices = createRef<VertexArray>();
-		float positions[8] = {
-			-0.5f, -0.5f,
-			-0.5f,  0.5f,
+			s_data->lineVertices = createRef<VertexArray>();
+			Ref<VertexBuffer> lineVB = createRef<VertexBuffer>(4 * sizeof(float));
+			Ref<VertexBufferLayout> lineVBL = createRef<VertexBufferLayout>();
+			lineVBL->push<float>(2);
+			s_data->lineVertices->bindBuffers(lineVB, lineVBL);
+
+			s_data->squareVertices = createRef<VertexArray>();
+			float positions[8] = {
+				-0.5f, -0.5f,
+				-0.5f,  0.5f,
 				0.5f,  0.5f,
 				0.5f, -0.5f
-		};
-		Ref<VertexBuffer> squareVB = createRef<VertexBuffer>(8 * sizeof(float), positions);
-		Ref<VertexBufferLayout> vbl = createRef<VertexBufferLayout>();
-		vbl->push<float>(2, 0);
-		s_data->squareVertices->bindBuffers(squareVB, vbl);
+			};
+			Ref<VertexBuffer> squareVB = createRef<VertexBuffer>(8 * sizeof(float), positions);
+			Ref<VertexBufferLayout> quadVBL = createRef<VertexBufferLayout>();
+			quadVBL->push<float>(2);
+			s_data->squareVertices->bindBuffers(squareVB, quadVBL);
 
-		unsigned int quadIndices[6] = {
-			0, 1, 2,
-			2, 3, 0
-		};
-		s_data->quadIndices = createRef<IndexBuffer>(6, quadIndices);
+			unsigned int quadIndices[6] = {
+				0, 1, 2,
+				2, 3, 0
+			};
+			s_data->quadIndices = createRef<IndexBuffer>(6, quadIndices);
 
-		unsigned int lineQuadIndices[8] = {
-			0, 1,
-			1, 2,
-			2, 3,
-			3, 0
-		};
-		s_data->lineQuadIndices = createRef<IndexBuffer>(8, lineQuadIndices);
+			unsigned int lineQuadIndices[8] = {
+				0, 1,
+				1, 2,
+				2, 3,
+				3, 0
+			};
+			s_data->lineQuadIndices = createRef<IndexBuffer>(8, lineQuadIndices);
+
+			s_data->windowSize.x = Application::GetInstance().getWindow().getWidth();
+			s_data->windowSize.y = Application::GetInstance().getWindow().getHeight();
+
+			s_data->quadShader = createRef<Shader>(
+				#include "embeddedShaders/Basic.glsl.vert.h"
+				,
+				#include "embeddedShaders/Basic.glsl.frag.h"
+			);
+
+			s_data->circleShader = createRef<Shader>(
+				#include "embeddedShaders/Circle.glsl.h"
+			);
+		}
 	}
 
 	void Renderer2D::shutdown()
 	{
-		delete s_data;
+		if (s_data)
+			delete s_data;
 	}
 
-	void Renderer2D::beginScene(const OrthograhicCamera & camera)
+	void Renderer2D::beginScene(const OrthographicCamera &camera)
 	{
 		s_data->quadShader->bind();
 		s_data->quadShader->setUniformMat4("u_MVP", camera.getViewProjectionMatrix());
+
+		s_data->circleShader->bind();
+		s_data->circleShader->setUniformMat4("u_MVP", camera.getViewProjectionMatrix());
 	}
 
 	void Renderer2D::endScene()
@@ -118,5 +147,79 @@ namespace Nest
 		s_data->squareVertices->bind();
 		s_data->lineQuadIndices->bind();
 		RenderCommand::drawLinesIndexed(s_data->lineQuadIndices);
+	}
+
+	void Renderer2D::drawCircle(chcl::Vector2<float> pos, chcl::Vector2<float> size, chcl::Vector4<float> color)
+	{
+		chcl::Mat4 transform = chcl::Mat4::Translation(pos.x, pos.y, 0) * chcl::Mat4::Scale(size.x, size.y, 1);
+		s_data->circleShader->bind();
+		s_data->circleShader->setUniformMat4("u_transform", transform);
+		s_data->circleShader->setUniform4f("u_fillColor", color);
+
+		s_data->squareVertices->bind();
+		s_data->quadIndices->bind();
+		RenderCommand::drawTrianglesIndexed(s_data->quadIndices);
+	}
+
+	void Renderer2D::drawCircle(chcl::Vector2<float> pos, chcl::Vector2<float> size, float thickness, chcl::Vector4<float> fillColor, chcl::Vector4<float> outlineColor)
+	{
+		chcl::Mat4 transform = chcl::Mat4::Translation(pos.x, pos.y, 0) * chcl::Mat4::Scale(size.x, size.y, 1);
+		s_data->circleShader->bind();
+		s_data->circleShader->setUniformMat4("u_transform", transform);
+		s_data->circleShader->setUniform4f("u_fillColor", fillColor);
+		s_data->circleShader->setUniform4f("u_outlineColor", outlineColor);
+		s_data->circleShader->setUniform2f("u_outlineWidth", thickness / size * 2);
+
+		s_data->squareVertices->bind();
+		s_data->quadIndices->bind();
+		RenderCommand::drawTrianglesIndexed(s_data->quadIndices);
+	}
+
+	void Renderer2D::drawFullScreenQuad()
+	{
+		s_data->quadShader->bind();
+		chcl::Mat4 transform = chcl::Mat4::Translation(float(s_data->windowSize.x) / 2, float(s_data->windowSize.y) / 2, 0.) * chcl::Mat4::Scale(s_data->windowSize.x, s_data->windowSize.y, 1.);
+		s_data->quadShader->setUniformMat4("u_transform", transform);
+
+		s_data->squareVertices->bind();
+		s_data->quadIndices->bind();
+		RenderCommand::drawTrianglesIndexed(s_data->quadIndices);
+	}
+
+	void Renderer2D::drawFullScreenQuad(Ref<Shader> shader)
+	{
+		shader->bind();
+		shader->setUniformMat4("u_MVP", chcl::Mat4::Scale(2.f, 2.f, 1.f));
+		shader->setUniformMat4("u_transform", chcl::Mat4::Identity());
+
+		s_data->squareVertices->bind();
+		s_data->quadIndices->bind();
+		RenderCommand::drawTrianglesIndexed(s_data->quadIndices);
+	}
+
+	void Renderer2D::drawFullScreenQuad(chcl::Vector4<float> color)
+	{
+		s_data->quadShader->bind();
+		chcl::Mat4 transform = chcl::Mat4::Translation(float(s_data->windowSize.x) / 2, float(s_data->windowSize.y) / 2, 0.) * chcl::Mat4::Scale(s_data->windowSize.x, s_data->windowSize.y, 1.);
+		s_data->quadShader->setUniformMat4("u_transform", transform);
+		s_data->quadShader->setUniform4f("u_color", color);
+
+		s_data->squareVertices->bind();
+		s_data->quadIndices->bind();
+		RenderCommand::drawTrianglesIndexed(s_data->quadIndices);
+	}
+
+	void Renderer2D::drawLine(chcl::Vector2<float> v1, chcl::Vector2<float> v2, chcl::Vector4<float> color)
+	{
+		s_data->quadShader->bind();
+		s_data->quadShader->setUniformMat4("u_transform", chcl::Mat4::Identity());
+		s_data->quadShader->setUniform4f("u_color", color);
+
+		auto vb = s_data->lineVertices->getVertexBuffer();
+		vb->setData(2 * sizeof(float), &v1, 0);
+		vb->setData(2 * sizeof(float), &v2, sizeof(v1));
+
+		s_data->lineVertices->bind();
+		RenderCommand::drawLines(1);
 	}
 }

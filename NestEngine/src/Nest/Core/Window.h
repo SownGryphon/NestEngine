@@ -32,6 +32,7 @@ namespace Nest
 		virtual void setEventCallback(const EventCallbackFn &func) = 0;
 		virtual void setVSync(bool enabled) = 0;
 		virtual bool isVSync() const = 0;
+		virtual void* getNativeWindow() = 0;
 
 		static Window* CreateWindow(const WindowProps &props = WindowProps());
 	};

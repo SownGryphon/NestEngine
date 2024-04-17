@@ -13,6 +13,21 @@ include "NestEngine/vendor/CHCL/CHCL"
 include "NestEngine/vendor/GLFW"
 include "NestEngine/vendor/Glad"
 
+project "NestGLSLEmbedder"
+	location "NestGLSLEmbedder"
+	kind "ConsoleApp"
+	language "C++"
+
+	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+
+	targetname("nglembed")
+
+	files
+	{
+		"%{prj.name}/src/*.cpp"
+	}
+
 project "NestEngine"
 	location "NestEngine"
 	kind "StaticLib"
@@ -24,7 +39,8 @@ project "NestEngine"
 	files
 	{
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
+		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/res/shaders/**.glsl*"
 	}
 
 	includedirs
@@ -42,6 +58,8 @@ project "NestEngine"
 		"Glad",
 		"opengl32.lib"
 	}
+
+	dependson("NestGLSLEmbedder")
 
 	defines
 	{
@@ -77,7 +95,8 @@ project "Sandbox"
 	files
 	{
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
+		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/res/shaders/**.glsl*"
 	}
 
 	includedirs

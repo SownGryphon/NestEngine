@@ -7,17 +7,17 @@ namespace Nest
 	class MouseMovedEvent : public Event
 	{
 	public:
-		MouseMovedEvent(float dx, float dy)
-			: m_dx(dx), m_dy(dy) {}
+		MouseMovedEvent(float x, float y)
+			: m_mouseX(x), m_mouseY(y) {}
 
-		inline float getHorizontal() const { return m_dx; }
-		inline float getVertical() const { return m_dx; }
+		inline float getHorizontal() const { return m_mouseX; }
+		inline float getVertical() const { return m_mouseX; }
 
 		EVENT_CLASS_TYPE(MouseMoved);
 		EVENT_CLASS_CATEGORY(EventCategoryInput | EventCategoryMouse);
 
 	private:
-		float m_dx, m_dy;
+		float m_mouseX, m_mouseY;
 	};
 
 	class MouseButtonPressedEvent : public Event
@@ -48,5 +48,21 @@ namespace Nest
 
 	private:
 		int m_button;
+	};
+
+	class MouseScrolledEvent : public Event
+	{
+	public:
+		MouseScrolledEvent(float dx, float dy)
+			: m_dx(dx), m_dy(dy) {}
+
+		inline float getDX() const { return m_dx; }
+		inline float getDY() const { return m_dy; }
+
+		EVENT_CLASS_TYPE(MouseScrolled);
+		EVENT_CLASS_CATEGORY(EventCategoryInput | EventCategoryMouse);
+
+	private:
+		float m_dx, m_dy;
 	};
 }

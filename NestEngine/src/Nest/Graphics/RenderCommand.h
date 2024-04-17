@@ -10,10 +10,34 @@ namespace Nest
 	{
 		void clear();
 
+		/**
+		 * @brief Draws points using the bound vertex array and shader
+		 * @param count How many point to draw
+		*/
 		void drawPoints(unsigned int count);
+
+		/**
+		 * @brief Draws lines using the bound vertex array and shader
+		 * @param count How many lines to draw
+		*/
 		void drawLines(unsigned int count);
+
+		/**
+		 * @brief Draws lines using the bound vertex array and shader
+		 * @param ib The index buffer specifying line vertices
+		*/
 		void drawLinesIndexed(Ref<IndexBuffer> &ib);
+
+		/**
+		 * @brief Draws triangles using the bound vertex array and shader
+		 * @param count How many triangles to draw
+		*/
 		void drawTriangles(unsigned int count);
+
+		/**
+		 * @brief Draws triangles using the bound vertex array and shader
+		 * @param ib The index buffer specifying triangle vertices
+		*/
 		void drawTrianglesIndexed(Ref<IndexBuffer> &ib);
 	}
 }

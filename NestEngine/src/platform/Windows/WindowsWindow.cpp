@@ -63,7 +63,7 @@ namespace Nest
 		if (!s_GLFWInitialized)
 		{
 			int success = glfwInit();
-			NE_ASSERT(success, "GLFW init failed.");
+			NE_ASSERT(success == GLFW_TRUE, "GLFW init failed.");
 
 			s_GLFWInitialized = true;
 		}
@@ -137,11 +137,18 @@ namespace Nest
 			}
 		});
 
-		glfwSetCursorPosCallback(m_window, [](GLFWwindow *window, double dx, double dy)
+		glfwSetCursorPosCallback(m_window, [](GLFWwindow *window, double mouseX, double mouseY)
 		{
 			WindowData &data = *(WindowData*)glfwGetWindowUserPointer(window);
-			MouseMovedEvent moveEvent(dx, dy);
+			MouseMovedEvent moveEvent(mouseX, mouseY);
 			data.eventCallback(moveEvent);
+		});
+
+		glfwSetScrollCallback(m_window, [](GLFWwindow *window, double dx, double dy)
+		{
+			WindowData &data = *(WindowData*)glfwGetWindowUserPointer(window);
+			MouseScrolledEvent scrollEvent(dx, dy);
+			data.eventCallback(scrollEvent);
 		});
 	}
 

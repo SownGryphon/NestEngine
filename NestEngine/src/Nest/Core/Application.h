@@ -27,6 +27,7 @@ namespace Nest
 		bool onWindowClose(WindowCloseEvent &e);
 
 		inline Window& getWindow() { return *m_window; }
+		static Application& GetInstance() { return *s_instance; }
 
 	private:
 		std::unique_ptr<Window> m_window;
