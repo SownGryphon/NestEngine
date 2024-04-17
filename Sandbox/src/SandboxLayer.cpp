@@ -30,7 +30,7 @@ void SandboxLayer::onUpdate(std::chrono::milliseconds timestep)
 
 	Nest::Renderer2D::beginScene(m_camera);
 
-	Nest::Renderer2D::drawCircle({ 700, 400 }, { 120, 230 }, 1, { 0.2f, 0.2f, 0.2f, 1.f });
+	Nest::Renderer2D::drawCircle({ 1280/2, 720/2 }, { 1280-2, 720-2 }, 1, 0.f);
 	Nest::Renderer2D::drawLineQuad({ 200, 500 }, { 150, 40 }, chcl::toRadians(30.f));
 	Nest::Renderer2D::drawQuad({ 100, 100 }, { 80, 50 });
 

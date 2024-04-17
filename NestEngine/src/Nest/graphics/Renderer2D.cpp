@@ -149,18 +149,6 @@ namespace Nest
 		RenderCommand::drawLinesIndexed(s_data->lineQuadIndices);
 	}
 
-	void Renderer2D::drawCircle(chcl::Vector2<float> pos, chcl::Vector2<float> size, chcl::Vector4<float> color)
-	{
-		chcl::Mat4 transform = chcl::Mat4::Translation(pos.x, pos.y, 0) * chcl::Mat4::Scale(size.x, size.y, 1);
-		s_data->circleShader->bind();
-		s_data->circleShader->setUniformMat4("u_transform", transform);
-		s_data->circleShader->setUniform4f("u_fillColor", color);
-
-		s_data->squareVertices->bind();
-		s_data->quadIndices->bind();
-		RenderCommand::drawTrianglesIndexed(s_data->quadIndices);
-	}
-
 	void Renderer2D::drawCircle(chcl::Vector2<float> pos, chcl::Vector2<float> size, float thickness, chcl::Vector4<float> fillColor, chcl::Vector4<float> outlineColor)
 	{
 		chcl::Mat4 transform = chcl::Mat4::Translation(pos.x, pos.y, 0) * chcl::Mat4::Scale(size.x, size.y, 1);
