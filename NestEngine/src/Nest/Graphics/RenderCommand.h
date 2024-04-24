@@ -11,6 +11,12 @@ namespace Nest
 		void clear();
 
 		/**
+		 * @brief Sets line width for subsequent draw calls
+		 * @param width Line width in pixels
+		 */
+		void setLineWidth(float width);
+
+		/**
 		 * @brief Draws points using the bound vertex array and shader
 		 * @param count How many point to draw
 		*/

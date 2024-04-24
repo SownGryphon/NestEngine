@@ -40,6 +40,8 @@ namespace Nest
 		void setUniform4f(const std::string &name, float v0, float v1, float v2, float v3);
 		void setUniform4f(const std::string &name, chcl::Vector4<float> v);
 
+		void setUniform1i(const std::string &name, int v);
+
 		void setUniform3fArr(const std::string &name, unsigned int count, std::vector<chcl::Vector3<float>> &arr);
 
 		void setUniformMat3(const std::string &name, const chcl::Mat3 &mat);
