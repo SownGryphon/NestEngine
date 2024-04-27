@@ -1,13 +1,10 @@
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
-IncludeDir = {}
-IncludeDir["CHCL"] = "../vendor/CHCL/CHCL/src"
-IncludeDir["GLFW"] = "../vendor/GLFW/include"
-IncludeDir["Glad"] = "../vendor/Glad/include"
-
 project "NestEngine"
 	kind "StaticLib"
 	language "C++"
+	cppdialect "C++20"
+	staticruntime "on"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -23,9 +20,9 @@ project "NestEngine"
 	{
 		"src",
 		"res",
-		"%{IncludeDir.CHCL}",
-		"%{IncludeDir.GLFW}",
-		"%{IncludeDir.Glad}"
+		"../vendor/CHCL/CHCL/src",
+		"../vendor/GLFW/include",
+		"../vendor/Glad/include"
 	}
 
 	links
@@ -42,8 +39,6 @@ project "NestEngine"
 	}
 
 	filter "system:windows"
-		cppdialect "C++20"
-		staticruntime "On"
 		systemversion "latest"
 
 		defines
