@@ -9,13 +9,13 @@ namespace Nest
 		unsigned int m_rendererID = 0;
 
 	public:
-		VertexBuffer(unsigned int size, void *data = nullptr);
+		VertexBuffer(size_t size, void *data = nullptr);
 		VertexBuffer(const VertexBuffer&) = delete;
 		~VertexBuffer();
 
 		void bind() const;
 		void unbind() const;
 
-		void setData(unsigned int size, void *data, unsigned int offset = 0);
+		void setData(size_t size, void *data, size_t offset = 0);
 	};
 }

@@ -1,6 +1,7 @@
 [submodule "NestEngine/vendor/CHCL"]
 	path = NestEngine/vendor/CHCL
 	url = https://github.com/SownGryphon/CHCL
+	branch = master
 [submodule "NestEngine/vendor/GLFW"]
 	path = NestEngine/vendor/GLFW
 	url = https://github.com/SownGryphon/glfw

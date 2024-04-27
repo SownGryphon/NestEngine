@@ -123,6 +123,11 @@ namespace Nest
 		glUniform4f(getUniformLocation(name), v.x, v.y, v.z, v.w);
 	}
 
+	void Shader::setUniform1i(const std::string &name, int v)
+	{
+		glUniform1i(getUniformLocation(name), v);
+	}
+
 	void Shader::setUniform3fArr(const std::string &name, unsigned int count, std::vector<chcl::Vector3<float>>& arr)
 	{
 		// Vector position values are stored contiguously, so this is safe
@@ -131,12 +136,12 @@ namespace Nest
 
 	void Shader::setUniformMat3(const std::string & name, const chcl::Mat3 &mat)
 	{
-		glUniformMatrix3fv(getUniformLocation(name), 1, true, mat.values());
+		glUniformMatrix3fv(getUniformLocation(name), 1, true, mat.data());
 	}
 
 	void Shader::setUniformMat4(const std::string &name, const chcl::Mat4 &mat)
 	{
-		glUniformMatrix4fv(getUniformLocation(name), 1, true, mat.values());
+		glUniformMatrix4fv(getUniformLocation(name), 1, true, mat.data());
 	}
 
 	int Shader::getUniformLocation(const std::string &name)

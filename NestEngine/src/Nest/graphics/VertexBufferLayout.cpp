@@ -4,7 +4,7 @@
 
 namespace Nest
 {
-	unsigned int VertexBufferLayout::VBLayoutElement::GetSizeOfType(unsigned int type)
+	size_t VertexBufferLayout::VBLayoutElement::GetSizeOfType(unsigned int type)
 	{
 		switch (type)
 		{

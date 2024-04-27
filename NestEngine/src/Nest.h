@@ -29,5 +29,6 @@
 #include "Nest/Graphics/Shader.h"
 #include "Nest/Graphics/VertexArray.h"
 #include "Nest/Graphics/IndexBuffer.h"
+#include "Nest/Graphics/Texture.h"
 
 #include "Nest/Graphics/OrthographicCamera.h"

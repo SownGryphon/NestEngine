@@ -9,6 +9,11 @@ namespace Nest
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
 
+	void RenderCommand::setLineWidth(float width)
+	{
+		glLineWidth(width);
+	}
+
 	void RenderCommand::drawPoints(unsigned int count)
 	{
 		glDrawArrays(GL_POINTS, 0, count);

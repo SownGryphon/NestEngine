@@ -5,7 +5,7 @@
 
 namespace Nest
 {
-	VertexBuffer::VertexBuffer(unsigned int size, void *data)
+	VertexBuffer::VertexBuffer(size_t size, void *data)
 	{
 		glGenBuffers(1, &m_rendererID);
 		bind();
@@ -30,7 +30,7 @@ namespace Nest
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
-	void VertexBuffer::setData(unsigned int size, void *data, unsigned int offset)
+	void VertexBuffer::setData(size_t size, void *data, size_t offset)
 	{
 		bind();
 		glBufferSubData(GL_ARRAY_BUFFER, offset, size, data);

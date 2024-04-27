@@ -11,8 +11,6 @@
 #include "Nest/Graphics/IndexBuffer.h"
 #include "Nest/Graphics/RenderCommand.h"
 
-
-
 namespace Nest
 {
 	struct RendererData
@@ -24,6 +22,7 @@ namespace Nest
 	};
 
 	RendererData *s_data = nullptr;
+	chcl::Mat4 MVP;
 
 	void Renderer2D::init()
 	{
@@ -91,6 +90,8 @@ namespace Nest
 
 		s_data->circleShader->bind();
 		s_data->circleShader->setUniformMat4("u_MVP", camera.getViewProjectionMatrix());
+
+		MVP = camera.getViewProjectionMatrix();
 	}
 
 	void Renderer2D::endScene()
@@ -103,6 +104,18 @@ namespace Nest
 		s_data->quadShader->bind();
 		s_data->quadShader->setUniformMat4("u_transform", transform);
 		s_data->quadShader->setUniform4f("u_color", color);
+
+		s_data->squareVertices->bind();
+		s_data->quadIndices->bind();
+		RenderCommand::drawTrianglesIndexed(s_data->quadIndices);
+	}
+
+	void Renderer2D::drawQuad(chcl::Vector2<float> pos, chcl::Vector2<float> size, Ref<Shader> shader)
+	{
+		chcl::Mat4 transform = chcl::Mat4::Translation(pos.x, pos.y, 0) * chcl::Mat4::Scale(size.x, size.y, 1);
+		shader->bind();
+		shader->setUniformMat4("u_MVP", MVP);
+		shader->setUniformMat4("u_transform", transform);
 
 		s_data->squareVertices->bind();
 		s_data->quadIndices->bind();
@@ -123,7 +136,21 @@ namespace Nest
 		RenderCommand::drawTrianglesIndexed(s_data->quadIndices);
 	}
 
-	void Renderer2D::drawLineQuad(chcl::Vector2<float> pos, chcl::Vector2<float> size, chcl::Vector4<float> color)
+	void Renderer2D::drawQuad(chcl::Vector2<float> pos, chcl::Vector2<float> size, float rotation, Ref<Shader> shader)
+	{
+		chcl::Mat4 transform = chcl::Mat4::Translation(pos.x, pos.y, 0);
+		transform *= chcl::Mat4::Rotation2D(rotation);
+		transform *= chcl::Mat4::Scale(size.x, size.y, 1);
+		s_data->quadShader->bind();
+		s_data->quadShader->setUniformMat4("u_MVP", MVP);
+		s_data->quadShader->setUniformMat4("u_transform", transform);
+
+		s_data->squareVertices->bind();
+		s_data->quadIndices->bind();
+		RenderCommand::drawTrianglesIndexed(s_data->quadIndices);
+	}
+
+	void Renderer2D::drawLineQuad(chcl::Vector2<float> pos, chcl::Vector2<float> size, chcl::Vector4<float> color, float weight)
 	{
 		chcl::Mat4 transform = chcl::Mat4::Translation(pos.x, pos.y, 0) * chcl::Mat4::Scale(size.x, size.y, 1);
 		s_data->quadShader->bind();
@@ -132,10 +159,11 @@ namespace Nest
 
 		s_data->squareVertices->bind();
 		s_data->lineQuadIndices->bind();
+		RenderCommand::setLineWidth(weight);
 		RenderCommand::drawLinesIndexed(s_data->lineQuadIndices);
 	}
 
-	void Renderer2D::drawLineQuad(chcl::Vector2<float> pos, chcl::Vector2<float> size, float rotation, chcl::Vector4<float> color)
+	void Renderer2D::drawLineQuad(chcl::Vector2<float> pos, chcl::Vector2<float> size, float rotation, chcl::Vector4<float> color, float weight)
 	{
 		chcl::Mat4 transform = chcl::Mat4::Translation(pos.x, pos.y, 0);
 		transform *= chcl::Mat4::Rotation2D(rotation);
@@ -146,6 +174,7 @@ namespace Nest
 
 		s_data->squareVertices->bind();
 		s_data->lineQuadIndices->bind();
+		RenderCommand::setLineWidth(weight);
 		RenderCommand::drawLinesIndexed(s_data->lineQuadIndices);
 	}
 
@@ -166,7 +195,7 @@ namespace Nest
 	void Renderer2D::drawFullScreenQuad()
 	{
 		s_data->quadShader->bind();
-		chcl::Mat4 transform = chcl::Mat4::Translation(float(s_data->windowSize.x) / 2, float(s_data->windowSize.y) / 2, 0.) * chcl::Mat4::Scale(s_data->windowSize.x, s_data->windowSize.y, 1.);
+		chcl::Mat4 transform = chcl::Mat4::Translation(float(s_data->windowSize.x) / 2, float(s_data->windowSize.y) / 2, 0.) * chcl::Mat4::Scale(float(s_data->windowSize.x), float(s_data->windowSize.y), 1.f);
 		s_data->quadShader->setUniformMat4("u_transform", transform);
 
 		s_data->squareVertices->bind();
@@ -188,7 +217,7 @@ namespace Nest
 	void Renderer2D::drawFullScreenQuad(chcl::Vector4<float> color)
 	{
 		s_data->quadShader->bind();
-		chcl::Mat4 transform = chcl::Mat4::Translation(float(s_data->windowSize.x) / 2, float(s_data->windowSize.y) / 2, 0.) * chcl::Mat4::Scale(s_data->windowSize.x, s_data->windowSize.y, 1.);
+		chcl::Mat4 transform = chcl::Mat4::Translation(float(s_data->windowSize.x) / 2, float(s_data->windowSize.y) / 2, 0.) * chcl::Mat4::Scale(float(s_data->windowSize.x), float(s_data->windowSize.y), 1.f);
 		s_data->quadShader->setUniformMat4("u_transform", transform);
 		s_data->quadShader->setUniform4f("u_color", color);
 
@@ -197,17 +226,18 @@ namespace Nest
 		RenderCommand::drawTrianglesIndexed(s_data->quadIndices);
 	}
 
-	void Renderer2D::drawLine(chcl::Vector2<float> v1, chcl::Vector2<float> v2, chcl::Vector4<float> color)
+	void Renderer2D::drawLine(chcl::Vector2<float> v1, chcl::Vector2<float> v2, chcl::Vector4<float> color, float width)
 	{
 		s_data->quadShader->bind();
 		s_data->quadShader->setUniformMat4("u_transform", chcl::Mat4::Identity());
 		s_data->quadShader->setUniform4f("u_color", color);
 
 		auto vb = s_data->lineVertices->getVertexBuffer();
+		s_data->lineVertices->bind();
 		vb->setData(2 * sizeof(float), &v1, 0);
 		vb->setData(2 * sizeof(float), &v2, sizeof(v1));
 
-		s_data->lineVertices->bind();
+		RenderCommand::setLineWidth(width);
 		RenderCommand::drawLines(1);
 	}
 }

@@ -13,23 +13,23 @@ namespace Nest
 		struct VBLayoutElement
 		{
 			unsigned int type;
-			unsigned int count;
+			size_t count;
 			unsigned int advanceCount;
 			bool normalized;
 
-			static unsigned int GetSizeOfType(unsigned int type);
+			static size_t GetSizeOfType(unsigned int type);
 		};
 
 	private:
-		unsigned int m_stride = 0;
+		size_t m_stride = 0;
 		std::vector<VBLayoutElement> m_layoutElements;
 
 	public:
-		inline const unsigned int getStride() const { return m_stride; }
+		inline const size_t getStride() const { return m_stride; }
 		inline const std::vector<VBLayoutElement>& getLayout() const { return m_layoutElements; }
 
 		template <typename T>
-		void push(unsigned int count, unsigned int  = 0)
+		void push(unsigned int count, unsigned int = 0)
 		{
 			std::runtime_error(false);
 		}

@@ -14,4 +14,19 @@ namespace Nest
         auto state = glfwGetKey(window, keyCode);
         return state == GLFW_PRESS || state == GLFW_REPEAT;
     }
+
+    bool Nest::WindowsInput::isMouseButtonDownImpl(int button)
+    {
+        auto window = static_cast<GLFWwindow*>(Application::GetInstance().getWindow().getNativeWindow());
+        auto buttonState = glfwGetMouseButton(window, button);
+        return buttonState == GLFW_PRESS;
+    }
+
+    chcl::Vector2<float> Nest::WindowsInput::getMousePosImpl()
+    {
+        auto window = static_cast<GLFWwindow*>(Application::GetInstance().getWindow().getNativeWindow());
+        double xpos, ypos;
+        glfwGetCursorPos(window, &xpos, &ypos);
+        return chcl::Vector2<float>(xpos, ypos);
+    }
 }

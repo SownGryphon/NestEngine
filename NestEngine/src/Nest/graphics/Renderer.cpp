@@ -24,6 +24,7 @@ namespace Nest
 	void Renderer::beginScene(const OrthographicCamera &camera)
 	{
 		viewProjectionMatrix = camera.getViewProjectionMatrix();
+		Renderer2D::beginScene(camera);
 	}
 
 	void Renderer::drawIndexed(Shader &shader, const VertexArray &va, const IndexBuffer &ib)

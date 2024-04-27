@@ -40,12 +40,14 @@ project "NestEngine"
 	{
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
-		"%{prj.name}/res/shaders/**.glsl*"
+		"%{prj.name}/res/shaders/**.glsl*",
+		"%{prj.name}/res/embeddedShaders/**.h"
 	}
 
 	includedirs
 	{
 		"%{prj.name}/src",
+		"%{prj.name}/res",
 		"%{IncludeDir.CHCL}",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}"
