@@ -4,14 +4,9 @@ workspace "NestEngine"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
-IncludeDir = {}
-IncludeDir["CHCL"] = "NestEngine/vendor/CHCL/CHCL/src"
-IncludeDir["GLFW"] = "NestEngine/vendor/GLFW/include"
-IncludeDir["Glad"] = "NestEngine/vendor/Glad/include"
-
-include "NestEngine/vendor/CHCL/CHCL"
-include "NestEngine/vendor/GLFW"
-include "NestEngine/vendor/Glad"
+include "vendor/CHCL/CHCL"
+include "vendor/GLFW"
+include "vendor/Glad"
 include "NestEngine"
 
 project "NestGLSLEmbedder"
@@ -46,9 +41,9 @@ project "Sandbox"
 
 	includedirs
 	{
-		"%{IncludeDir.CHCL}",
-		"%{IncludeDir.GLFW}",
-		"%{IncludeDir.Glad}",
+		"vendor/CHCL/CHCL/src",
+		"vendor/GLFW/include",
+		"vendor/Glad/include",
 		"NestEngine/src"
 	}
 

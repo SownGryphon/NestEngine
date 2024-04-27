@@ -1,7 +1,11 @@
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
+IncludeDir = {}
+IncludeDir["CHCL"] = "../vendor/CHCL/CHCL/src"
+IncludeDir["GLFW"] = "../vendor/GLFW/include"
+IncludeDir["Glad"] = "../vendor/Glad/include"
+
 project "NestEngine"
-	location "NestEngine"
 	kind "StaticLib"
 	language "C++"
 
@@ -10,14 +14,15 @@ project "NestEngine"
 
 	files
 	{
-		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp",
-		"%{prj.name}/res/shaders/**.glsl*"
+		"src/**.h",
+		"src/**.cpp",
+		"res/shaders/**.glsl*"
 	}
 
 	includedirs
 	{
-		"%{prj.name}/src",
+		"src",
+		"res",
 		"%{IncludeDir.CHCL}",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}"
