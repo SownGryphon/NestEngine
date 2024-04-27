@@ -4,8 +4,6 @@
 
 #include <geometry/Vector3.h>
 
-#include "Camera3D.h"
-
 class SandboxLayer : public Nest::Layer
 {
 public:
@@ -18,7 +16,6 @@ public:
 
 private:
 	Nest::OrthographicCamera m_camera;
-	Camera3D m_camera3D;
 
 	Nest::Ref<Nest::Shader> m_shader;
 };
