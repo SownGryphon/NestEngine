@@ -83,15 +83,15 @@ namespace Nest
 			delete s_data;
 	}
 
-	void Renderer2D::beginScene(const OrthographicCamera &camera)
+	void Renderer2D::beginScene(const chcl::Mat4 &mvp)
 	{
 		s_data->quadShader->bind();
-		s_data->quadShader->setUniformMat4("u_MVP", camera.getViewProjectionMatrix());
+		s_data->quadShader->setUniformMat4("u_MVP", mvp);
 
 		s_data->circleShader->bind();
-		s_data->circleShader->setUniformMat4("u_MVP", camera.getViewProjectionMatrix());
+		s_data->circleShader->setUniformMat4("u_MVP", mvp);
 
-		MVP = camera.getViewProjectionMatrix();
+		MVP = mvp;
 	}
 
 	void Renderer2D::endScene()
@@ -100,7 +100,7 @@ namespace Nest
 
 	void Renderer2D::drawQuad(chcl::Vector2<float> pos, chcl::Vector2<float> size, chcl::Vector4<float> color)
 	{
-		chcl::Mat4 transform = chcl::Mat4::Translation(pos.x, pos.y, 0) * chcl::Mat4::Scale(size.x, size.y, 1);
+		chcl::Mat4 transform = chcl::Mat4::Translation3D(pos.x, pos.y, 0) * chcl::Mat4::Scale3D(size.x, size.y, 1);
 		s_data->quadShader->bind();
 		s_data->quadShader->setUniformMat4("u_transform", transform);
 		s_data->quadShader->setUniform4f("u_color", color);
@@ -112,7 +112,7 @@ namespace Nest
 
 	void Renderer2D::drawQuad(chcl::Vector2<float> pos, chcl::Vector2<float> size, Ref<Shader> shader)
 	{
-		chcl::Mat4 transform = chcl::Mat4::Translation(pos.x, pos.y, 0) * chcl::Mat4::Scale(size.x, size.y, 1);
+		chcl::Mat4 transform = chcl::Mat4::Translation3D(pos.x, pos.y, 0) * chcl::Mat4::Scale3D(size.x, size.y, 1);
 		shader->bind();
 		shader->setUniformMat4("u_MVP", MVP);
 		shader->setUniformMat4("u_transform", transform);
@@ -124,9 +124,9 @@ namespace Nest
 
 	void Renderer2D::drawQuad(chcl::Vector2<float> pos, chcl::Vector2<float> size, float rotation, chcl::Vector4<float> color)
 	{
-		chcl::Mat4 transform = chcl::Mat4::Translation(pos.x, pos.y, 0);
-		transform *= chcl::Mat4::Rotation2D(rotation);
-		transform *= chcl::Mat4::Scale(size.x, size.y, 1);
+		chcl::Mat4 transform = chcl::Mat4::Translation3D(pos.x, pos.y, 0);
+		transform *= chcl::Mat4::RotationXY(rotation);
+		transform *= chcl::Mat4::Scale3D(size.x, size.y, 1);
 		s_data->quadShader->bind();
 		s_data->quadShader->setUniformMat4("u_transform", transform);
 		s_data->quadShader->setUniform4f("u_color", color);
@@ -138,9 +138,9 @@ namespace Nest
 
 	void Renderer2D::drawQuad(chcl::Vector2<float> pos, chcl::Vector2<float> size, float rotation, Ref<Shader> shader)
 	{
-		chcl::Mat4 transform = chcl::Mat4::Translation(pos.x, pos.y, 0);
-		transform *= chcl::Mat4::Rotation2D(rotation);
-		transform *= chcl::Mat4::Scale(size.x, size.y, 1);
+		chcl::Mat4 transform = chcl::Mat4::Translation3D(pos.x, pos.y, 0);
+		transform *= chcl::Mat4::RotationXY(rotation);
+		transform *= chcl::Mat4::Scale3D(size.x, size.y, 1);
 		s_data->quadShader->bind();
 		s_data->quadShader->setUniformMat4("u_MVP", MVP);
 		s_data->quadShader->setUniformMat4("u_transform", transform);
@@ -152,7 +152,7 @@ namespace Nest
 
 	void Renderer2D::drawLineQuad(chcl::Vector2<float> pos, chcl::Vector2<float> size, chcl::Vector4<float> color, float weight)
 	{
-		chcl::Mat4 transform = chcl::Mat4::Translation(pos.x, pos.y, 0) * chcl::Mat4::Scale(size.x, size.y, 1);
+		chcl::Mat4 transform = chcl::Mat4::Translation3D(pos.x, pos.y, 0) * chcl::Mat4::Scale3D(size.x, size.y, 1);
 		s_data->quadShader->bind();
 		s_data->quadShader->setUniformMat4("u_transform", transform);
 		s_data->quadShader->setUniform4f("u_color", color);
@@ -165,9 +165,9 @@ namespace Nest
 
 	void Renderer2D::drawLineQuad(chcl::Vector2<float> pos, chcl::Vector2<float> size, float rotation, chcl::Vector4<float> color, float weight)
 	{
-		chcl::Mat4 transform = chcl::Mat4::Translation(pos.x, pos.y, 0);
-		transform *= chcl::Mat4::Rotation2D(rotation);
-		transform *= chcl::Mat4::Scale(size.x, size.y, 1);
+		chcl::Mat4 transform = chcl::Mat4::Translation3D(pos.x, pos.y, 0);
+		transform *= chcl::Mat4::RotationXY(rotation);
+		transform *= chcl::Mat4::Scale3D(size.x, size.y, 1);
 		s_data->quadShader->bind();
 		s_data->quadShader->setUniformMat4("u_transform", transform);
 		s_data->quadShader->setUniform4f("u_color", color);
@@ -180,7 +180,7 @@ namespace Nest
 
 	void Renderer2D::drawCircle(chcl::Vector2<float> pos, chcl::Vector2<float> size, float thickness, chcl::Vector4<float> fillColor, chcl::Vector4<float> outlineColor)
 	{
-		chcl::Mat4 transform = chcl::Mat4::Translation(pos.x, pos.y, 0) * chcl::Mat4::Scale(size.x, size.y, 1);
+		chcl::Mat4 transform = chcl::Mat4::Translation3D(pos.x, pos.y, 0) * chcl::Mat4::Scale3D(size.x, size.y, 1);
 		s_data->circleShader->bind();
 		s_data->circleShader->setUniformMat4("u_transform", transform);
 		s_data->circleShader->setUniform4f("u_fillColor", fillColor);
@@ -195,7 +195,8 @@ namespace Nest
 	void Renderer2D::drawFullScreenQuad()
 	{
 		s_data->quadShader->bind();
-		chcl::Mat4 transform = chcl::Mat4::Translation(float(s_data->windowSize.x) / 2, float(s_data->windowSize.y) / 2, 0.) * chcl::Mat4::Scale(float(s_data->windowSize.x), float(s_data->windowSize.y), 1.f);
+		chcl::Mat4 transform = chcl::Mat4::Translation3D(float(s_data->windowSize.x) / 2, float(s_data->windowSize.y) / 2, 0.);
+		transform *= chcl::Mat4::Scale3D(float(s_data->windowSize.x), float(s_data->windowSize.y), 1.f);
 		s_data->quadShader->setUniformMat4("u_transform", transform);
 
 		s_data->squareVertices->bind();
@@ -206,7 +207,7 @@ namespace Nest
 	void Renderer2D::drawFullScreenQuad(Ref<Shader> shader)
 	{
 		shader->bind();
-		shader->setUniformMat4("u_MVP", chcl::Mat4::Scale(2.f, 2.f, 1.f));
+		shader->setUniformMat4("u_MVP", chcl::Mat4::Scale3D(2.f, 2.f, 1.f));
 		shader->setUniformMat4("u_transform", chcl::Mat4::Identity());
 
 		s_data->squareVertices->bind();
@@ -217,7 +218,7 @@ namespace Nest
 	void Renderer2D::drawFullScreenQuad(chcl::Vector4<float> color)
 	{
 		s_data->quadShader->bind();
-		chcl::Mat4 transform = chcl::Mat4::Translation(float(s_data->windowSize.x) / 2, float(s_data->windowSize.y) / 2, 0.) * chcl::Mat4::Scale(float(s_data->windowSize.x), float(s_data->windowSize.y), 1.f);
+		chcl::Mat4 transform = chcl::Mat4::Translation3D(float(s_data->windowSize.x) / 2, float(s_data->windowSize.y) / 2, 0.) * chcl::Mat4::Scale3D(float(s_data->windowSize.x), float(s_data->windowSize.y), 1.f);
 		s_data->quadShader->setUniformMat4("u_transform", transform);
 		s_data->quadShader->setUniform4f("u_color", color);
 

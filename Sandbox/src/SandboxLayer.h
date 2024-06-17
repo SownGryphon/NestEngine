@@ -15,7 +15,7 @@ public:
 	void onEvent(Nest::Event &e) override;
 
 private:
-	Nest::OrthographicCamera m_camera;
+	Nest::OrthographicCamera2D m_camera;
 
 	Nest::Ref<Nest::Shader> m_shader;
 };

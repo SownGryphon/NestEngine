@@ -15,7 +15,8 @@ namespace Nest
 		void init();
 		void shutdown();
 
-		void beginScene(const OrthographicCamera &camera);
+		// Sets up a scene using the rovided view projection matrix
+		void beginScene(const chcl::Mat4 &vpm);
 
 		void drawIndexed(Shader &shader, const VertexArray &va, const IndexBuffer &ib);
 		void drawLinesIndexed(Shader &shader, const VertexArray &va, const IndexBuffer &ib);

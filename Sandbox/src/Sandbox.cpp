@@ -7,8 +7,8 @@
 class Sandbox : public Nest::Application
 {
 public:
-	Sandbox()
-		: Application("Sandbox Example", 1280, 720)
+	Sandbox() :
+		Application("Sandbox Example", 1280, 720)
 	{
 		pushLayer(new SandboxLayer());
 	}

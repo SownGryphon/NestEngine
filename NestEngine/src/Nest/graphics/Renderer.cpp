@@ -21,10 +21,9 @@ namespace Nest
 		Renderer2D::shutdown();
 	}
 
-	void Renderer::beginScene(const OrthographicCamera &camera)
+	void Renderer::beginScene(const chcl::Mat4 &vpm)
 	{
-		viewProjectionMatrix = camera.getViewProjectionMatrix();
-		Renderer2D::beginScene(camera);
+		viewProjectionMatrix = vpm;
 	}
 
 	void Renderer::drawIndexed(Shader &shader, const VertexArray &va, const IndexBuffer &ib)

@@ -6,7 +6,6 @@
 
 #include "Nest/Core/Core.h"
 #include "Nest/Graphics/Shader.h"
-#include "Nest/Graphics/OrthographicCamera.h"
 
 namespace Nest
 {
@@ -15,7 +14,7 @@ namespace Nest
 		void init();
 		void shutdown();
 
-		void beginScene(const OrthographicCamera &camera);
+		void beginScene(const chcl::Mat4 &mvp);
 		void endScene();
 
 		void drawQuad(chcl::Vector2<float> pos, chcl::Vector2<float> size, chcl::Vector4<float> color = 1.f);

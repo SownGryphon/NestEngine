@@ -15,7 +15,9 @@
 
 #include "Nest/Core/KeyCodes.h"
 #include "Nest/Core/Input.h"
-#include "Nest/Graphics/OrthographicCameraController.h"
+#include "Nest/Graphics/OrthographicCamera.h"
+#include "Nest/Graphics/OrthographicCamera2D.h"
+#include "Nest/Graphics/OrthoCamController2D.h"
 
 // ------- Utils -------
 #include "Nest/Utils/Random.h"
