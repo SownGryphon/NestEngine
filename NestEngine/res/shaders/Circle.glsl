@@ -1,4 +1,4 @@
-//#shader vertex
+@shader vertex
 #version 330 core
 
 layout(location = 0) in vec4 pos;
@@ -14,7 +14,7 @@ void main()
 	uv = pos.xy * 2;
 }
 
-//#shader fragment
+@shader fragment
 #version 330 core
 
 layout(location = 0) in vec2 uv;

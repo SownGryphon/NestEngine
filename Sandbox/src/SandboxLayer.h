@@ -16,6 +16,4 @@ public:
 
 private:
 	Nest::OrthographicCamera2D m_camera;
-
-	Nest::Ref<Nest::Shader> m_shader;
 };

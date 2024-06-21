@@ -1,5 +1,7 @@
 #pragma once
 
+#include <chrono>
+
 #include "Nest/Core/Window.h"
 
 #include <GLFW/glfw3.h>
@@ -12,6 +14,7 @@ namespace Nest
 		WindowsWindow(const WindowProps &props);
 		virtual ~WindowsWindow();
 
+		void processEvents() override;
 		void onUpdate() override;
 
 		unsigned int getWidth() const override;
@@ -20,6 +23,7 @@ namespace Nest
 		inline void setEventCallback(const EventCallbackFn &func) override { m_winData.eventCallback = func; }
 		void setVSync(bool enabled) override;
 		bool isVSync() const override;
+		virtual void setFPS(float fps) override;
 		inline void* getNativeWindow() override { return m_window; }
 
 	private:
@@ -32,7 +36,10 @@ namespace Nest
 		{
 			std::string title;
 			unsigned int width, height;
-			bool vSync;
+			bool resizable;
+			bool vSync = false;
+			float fps = 0.f;
+			std::chrono::high_resolution_clock::time_point lastRefresh;
 
 			EventCallbackFn eventCallback;
 		};

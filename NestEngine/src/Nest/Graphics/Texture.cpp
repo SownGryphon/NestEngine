@@ -63,7 +63,7 @@ Nest::Texture::~Texture()
 
 void Nest::Texture::setData(size_t width, size_t height, Format format, void *data)
 {
-	glTexImage2D(GL_TEXTURE_2D, 0, format.m_format, width, height, 0, format.m_format, format.m_type, data);
+	glTexImage2D(GL_TEXTURE_2D, 0, format.m_format, (GLuint)width, (GLuint)height, 0, format.m_format, format.m_type, data);
 	glGenerateMipmap(GL_TEXTURE_2D);
 }
 

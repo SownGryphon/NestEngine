@@ -6,6 +6,7 @@
 
 #include "Nest/Graphics/Renderer.h"
 #include "Nest/Utils/Time.h"
+#include "Nest/Core/Input.h"
 
 namespace Nest
 {
@@ -17,9 +18,9 @@ namespace Nest
 		init();
 	}
 
-	Application::Application(const std::string & windowTitle, unsigned int windowWidth, unsigned int windowHeight)
+	Application::Application(const std::string & windowTitle, unsigned int windowWidth, unsigned int windowHeight, bool resizable)
 	{
-		m_window = std::unique_ptr<Window>(Window::CreateWindow({ windowTitle, windowWidth, windowHeight }));
+		m_window = std::unique_ptr<Window>(Window::CreateWindow({ windowTitle, windowWidth, windowHeight, resizable }));
 		init();
 	}
 
@@ -41,10 +42,14 @@ namespace Nest
 		{
 			auto now = Time::getTimeMillis();
 
+			m_window->processEvents();
+
 			for (Layer *layer : m_layerStack)
 				layer->onUpdate(now - lastStepTime);
 
 			m_window->onUpdate();
+
+			Input::Clear();
 
 			lastStepTime = now;
 		}
@@ -54,6 +59,8 @@ namespace Nest
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.dispatchEvent<WindowCloseEvent>(NE_BIND_EVENT_FN(Application::onWindowClose));
+
+		Input::OnEvent(e);
 
 		for (auto it = m_layerStack.rbegin(); it != m_layerStack.rend(); ++it)
 		{

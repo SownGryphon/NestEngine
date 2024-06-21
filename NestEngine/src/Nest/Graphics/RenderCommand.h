@@ -32,7 +32,7 @@ namespace Nest
 		 * @brief Draws lines using the bound vertex array and shader
 		 * @param ib The index buffer specifying line vertices
 		*/
-		void drawLinesIndexed(Ref<IndexBuffer> &ib);
+		void drawLinesIndexed(Ref<const IndexBuffer> ib);
 
 		/**
 		 * @brief Draws triangles using the bound vertex array and shader
@@ -44,6 +44,6 @@ namespace Nest
 		 * @brief Draws triangles using the bound vertex array and shader
 		 * @param ib The index buffer specifying triangle vertices
 		*/
-		void drawTrianglesIndexed(Ref<IndexBuffer> &ib);
+		void drawTrianglesIndexed(Ref<const IndexBuffer> ib);
 	}
 }

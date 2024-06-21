@@ -1,6 +1,7 @@
 #pragma once
 
 #include <maths/Common.h>
+#include <maths/Mat4.h>
 #include <geometry/Vector2.h>
 #include <geometry/Vector4.h>
 

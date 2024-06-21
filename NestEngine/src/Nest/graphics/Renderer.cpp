@@ -3,6 +3,7 @@
 #include <glad/glad.h>
 
 #include "Nest/Graphics/Renderer2D.h"
+#include "Nest/Graphics/Renderer3D.h"
 
 namespace Nest
 {
@@ -14,11 +15,13 @@ namespace Nest
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		Renderer2D::init();
+		Renderer3D::init();
 	}
 
 	void Renderer::shutdown()
 	{
 		Renderer2D::shutdown();
+		Renderer3D::shutdown();
 	}
 
 	void Renderer::beginScene(const chcl::Mat4 &vpm)
@@ -32,7 +35,7 @@ namespace Nest
 		shader.setUniformMat4("u_MVP", viewProjectionMatrix);
 		va.bind();
 		ib.bind();
-		glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, (GLuint)ib.getCount(), GL_UNSIGNED_INT, 0);
 	}
 
 	void Renderer::drawLinesIndexed(Shader &shader, const VertexArray &va, const IndexBuffer &ib)
@@ -41,7 +44,7 @@ namespace Nest
 		shader.setUniformMat4("u_MVP", viewProjectionMatrix);
 		va.bind();
 		ib.bind();
-		glDrawElements(GL_LINES, ib.getCount(), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_LINES, (GLuint)ib.getCount(), GL_UNSIGNED_INT, 0);
 	}
 
 	void Renderer::drawPoints(Shader &shader, const VertexArray &va, unsigned int count)

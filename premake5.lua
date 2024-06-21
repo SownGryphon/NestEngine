@@ -13,6 +13,8 @@ project "NestGLSLEmbedder"
 	location "NestGLSLEmbedder"
 	kind "ConsoleApp"
 	language "C++"
+	cppdialect "C++20"
+	staticruntime "On"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -21,13 +23,35 @@ project "NestGLSLEmbedder"
 
 	files
 	{
+		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/*.cpp"
 	}
+	
+	includedirs
+	{
+		"vendor/CHCL/CHCL/src",
+	}
+	
+	links
+	{
+		"CHCL"
+	}
+
+	filter "system:windows"
+		systemversion "latest"
+
+	filter "configurations:Debug"
+		symbols "On"
+
+	filter "configurations:Release"
+		optimize "On"
 
 project "Sandbox"
 	location "Sandbox"
 	kind "ConsoleApp"
 	language "C++"
+	cppdialect "C++20"
+	staticruntime "On"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -57,8 +81,6 @@ project "Sandbox"
 	}
 
 	filter "system:windows"
-		cppdialect "C++20"
-		staticruntime "On"
 		systemversion "latest"
 
 		defines

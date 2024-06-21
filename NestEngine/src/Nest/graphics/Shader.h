@@ -4,7 +4,8 @@
 #include <unordered_map>
 #include <vector>
 
-#include <maths/SquareMatrix.h>
+#include <maths/Mat3.h>
+#include <maths/Mat4.h>
 #include <geometry/Vector2.h>
 #include <geometry/Vector3.h>
 #include <geometry/Vector4.h>
@@ -21,13 +22,13 @@ namespace Nest
 	public:
 		Shader();
 		Shader(const std::string &source);
-		Shader(const std::string &vertexSource, const std::string &fragmentSource);
+		Shader(std::vector<std::string> sourceFiles);
 		Shader(const Shader&) = delete;
 		Shader(Shader&&) = default;
 		~Shader();
 
 		static Ref<Shader> FromFile(const std::string &sourcePath);
-		static Ref<Shader> FromFile(const std::string &vertexPath, const std::string &fragmentPath);
+		static Ref<Shader> FromFile(std::vector<std::string> sourceFilePaths);
 
 		void bind() const;
 		void unbind() const;

@@ -4,7 +4,7 @@
 
 namespace Nest
 {
-	IndexBuffer::IndexBuffer(unsigned int count, unsigned int *indices)
+	IndexBuffer::IndexBuffer(size_t count, unsigned int *indices)
 		: m_count(count)
 	{
 		glGenBuffers(1, &m_rendererID);

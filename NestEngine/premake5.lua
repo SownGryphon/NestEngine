@@ -13,7 +13,8 @@ project "NestEngine"
 	{
 		"src/**.h",
 		"src/**.cpp",
-		"res/shaders/**.glsl*"
+		"res/shaders/**.glsl*",
+		"res/embeddedShaders/**.h"
 	}
 
 	includedirs

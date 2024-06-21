@@ -11,9 +11,13 @@
 #include "Nest/Graphics/IndexBuffer.h"
 #include "Nest/Graphics/RenderCommand.h"
 
+#include "embeddedShaders/BasicVert.h"
+#include "embeddedShaders/BasicFrag.h"
+#include "embeddedShaders/Circle.h"
+
 namespace Nest
 {
-	struct RendererData
+	struct Renderer2DData
 	{
 		Ref<Shader> quadShader, circleShader;
 		Ref<VertexArray> squareVertices, lineVertices;
@@ -21,14 +25,14 @@ namespace Nest
 		chcl::Vector2<unsigned int> windowSize;
 	};
 
-	RendererData *s_data = nullptr;
-	chcl::Mat4 MVP;
+	static Renderer2DData *s_data = nullptr;
+	static chcl::Mat4 MVP;
 
 	void Renderer2D::init()
 	{
 		if (!s_data)
 		{
-			s_data = new RendererData();
+			s_data = new Renderer2DData();
 
 			s_data->lineVertices = createRef<VertexArray>();
 			Ref<VertexBuffer> lineVB = createRef<VertexBuffer>(4 * sizeof(float));
@@ -65,15 +69,9 @@ namespace Nest
 			s_data->windowSize.x = Application::GetInstance().getWindow().getWidth();
 			s_data->windowSize.y = Application::GetInstance().getWindow().getHeight();
 
-			s_data->quadShader = createRef<Shader>(
-				#include "embeddedShaders/Basic.glsl.vert.h"
-				,
-				#include "embeddedShaders/Basic.glsl.frag.h"
-			);
+			s_data->quadShader = createRef<Shader>(std::vector<std::string>({ glslBasicVert_data, glslBasicFrag_data }));
 
-			s_data->circleShader = createRef<Shader>(
-				#include "embeddedShaders/Circle.glsl.h"
-			);
+			s_data->circleShader = createRef<Shader>(glslCircle_data);
 		}
 	}
 

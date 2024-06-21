@@ -32,9 +32,9 @@ namespace Nest
 		const auto& layout = vbLayout->getLayout();
 		for (size_t i = 0; i < layout.size(); ++i)
 		{
-			glEnableVertexAttribArray(i);
-			glVertexAttribDivisor(i, layout[i].advanceCount);
-			glVertexAttribPointer(i, layout[i].count, layout[i].type, layout[i].normalized, vbLayout->getStride(), (void*)offset);
+			glEnableVertexAttribArray((GLuint)i);
+			glVertexAttribDivisor((GLuint)i, layout[i].advanceCount);
+			glVertexAttribPointer((GLuint)i, (GLuint)layout[i].count, layout[i].type, layout[i].normalized, (GLuint)vbLayout->getStride(), (void*)offset);
 			offset += layout[i].count * VertexBufferLayout::VBLayoutElement::GetSizeOfType(layout[i].type);
 		}
 

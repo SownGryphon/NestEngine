@@ -15,22 +15,25 @@
 
 #include "Nest/Core/KeyCodes.h"
 #include "Nest/Core/Input.h"
-#include "Nest/Graphics/OrthographicCamera.h"
-#include "Nest/Graphics/OrthographicCamera2D.h"
-#include "Nest/Graphics/OrthoCamController2D.h"
 
 // ------- Utils -------
 #include "Nest/Utils/Random.h"
 #include "Nest/Utils/Time.h"
 
 // ----- Graphics ------
-#include "Nest/Graphics/RenderCommand.h"
-#include "Nest/Graphics/Renderer.h"
-#include "Nest/Graphics/Renderer2D.h"
-
 #include "Nest/Graphics/Shader.h"
 #include "Nest/Graphics/VertexArray.h"
 #include "Nest/Graphics/IndexBuffer.h"
 #include "Nest/Graphics/Texture.h"
 
-#include "Nest/Graphics/OrthographicCamera.h"
+#include "Nest/Graphics/RenderCommand.h"
+#include "Nest/Graphics/Renderer.h"
+#include "Nest/Graphics/Renderer2D.h"
+#include "Nest/Graphics/Renderer3D.h"
+
+#include "Nest/Graphics/cameras/OrthographicCamera2D.h"
+#include "Nest/Graphics/cameras/OrthoCamController2D.h"
+#include "Nest/Graphics/cameras/PerspectiveCamera3D.h"
+#include "Nest/Graphics/cameras/PerspectiveCamController3D.h"
+
+#include "Nest/Graphics/StaticMesh.h"

@@ -1,5 +1,6 @@
 #include "WindowsWindow.h"
 
+#include <thread>
 #include <iostream>
 
 #include <glad/glad.h>
@@ -23,9 +24,22 @@ namespace Nest
 		shutdown();
 	}
 
-	void WindowsWindow::onUpdate()
+	void Nest::WindowsWindow::processEvents()
 	{
 		glfwPollEvents();
+	}
+
+	void WindowsWindow::onUpdate()
+	{
+		if (!m_winData.vSync && m_winData.fps)
+		{
+			auto timeNow = std::chrono::high_resolution_clock::now();
+			auto sleepTime = m_winData.lastRefresh + std::chrono::nanoseconds((int) (1000000 / m_winData.fps));
+
+			if (sleepTime > timeNow)
+				std::this_thread::sleep_until(sleepTime);
+		}
+
 		glfwSwapBuffers(m_window);
 	}
 
@@ -54,11 +68,17 @@ namespace Nest
 		return m_winData.vSync;
 	}
 
+	void WindowsWindow::setFPS(float fps)
+	{
+		m_winData.fps = fps;
+	}
+
 	void WindowsWindow::init(const WindowProps &props)
 	{
 		m_winData.width = props.width;
 		m_winData.height = props.height;
 		m_winData.title = props.title;
+		m_winData.resizable = props.resizable;
 
 		if (!s_GLFWInitialized)
 		{
@@ -72,7 +92,7 @@ namespace Nest
 			NE_ERROR("[GL ERROR {0}]: {1}", code, message);
 		});
 
-		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+		glfwWindowHint(GLFW_RESIZABLE, m_winData.resizable ? GLFW_TRUE : GLFW_FALSE);
 		m_window = glfwCreateWindow(props.width, props.height, props.title.c_str(), NULL, NULL);
 		glfwMakeContextCurrent(m_window);
 		glfwSetWindowUserPointer(m_window, &m_winData);
@@ -140,14 +160,14 @@ namespace Nest
 		glfwSetCursorPosCallback(m_window, [](GLFWwindow *window, double mouseX, double mouseY)
 		{
 			WindowData &data = *(WindowData*)glfwGetWindowUserPointer(window);
-			MouseMovedEvent moveEvent(mouseX, mouseY);
+			MouseMovedEvent moveEvent((float)mouseX, (float)mouseY);
 			data.eventCallback(moveEvent);
 		});
 
 		glfwSetScrollCallback(m_window, [](GLFWwindow *window, double dx, double dy)
 		{
 			WindowData &data = *(WindowData*)glfwGetWindowUserPointer(window);
-			MouseScrolledEvent scrollEvent(dx, dy);
+			MouseScrolledEvent scrollEvent((float)dx, (float)dy);
 			data.eventCallback(scrollEvent);
 		});
 	}
@@ -157,8 +177,10 @@ namespace Nest
 		glfwDestroyWindow(m_window);
 	}
 
+	#ifdef NE_PLATFORM_WINDOWS
 	Window* Window::CreateWindow(const WindowProps &props)
 	{
 		return new WindowsWindow(props);
 	}
+	#endif
 }

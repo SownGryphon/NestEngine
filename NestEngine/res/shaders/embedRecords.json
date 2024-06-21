@@ -1,0 +1,34 @@
+[
+	{
+		"inFile": "Axis3D.glsl",
+		"outFilename": "Axis3D",
+		"countSuffix": "_count",
+		"varName": "glslAxis3D",
+		"charsPerLine": 50,
+		"dataSuffix": "_data"
+	},
+	{
+		"inFile": "Basic.glsl.vert",
+		"outFilename": "BasicVert",
+		"countSuffix": "_count",
+		"varName": "glslBasicVert",
+		"charsPerLine": 50,
+		"dataSuffix": "_data"
+	},
+	{
+		"inFile": "Basic.glsl.frag",
+		"outFilename": "BasicFrag",
+		"countSuffix": "_count",
+		"varName": "glslBasicFrag",
+		"charsPerLine": 50,
+		"dataSuffix": "_data"
+	},
+	{
+		"inFile": "Circle.glsl",
+		"outFilename": "Circle",
+		"countSuffix": "_count",
+		"varName": "glslCircle",
+		"charsPerLine": 50,
+		"dataSuffix": "_data"
+	}
+]

@@ -1,7 +1,5 @@
 #include "SandboxLayer.h"
 
-#include <Nest.h>
-
 SandboxLayer::SandboxLayer()
 	: m_camera(chcl::AlignedRect(0, 0, 1280, 720))
 {}

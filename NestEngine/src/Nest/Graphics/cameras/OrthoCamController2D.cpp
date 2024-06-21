@@ -7,40 +7,38 @@
 namespace Nest
 {
 	Nest::OrthoCamController2D::OrthoCamController2D(chcl::Vector2<float> pos, float aspectRatio) :
-		m_aspectRatio(aspectRatio), m_zoom(0.f),
-		m_camera(pos, { aspectRatio, 1.f })
+		OrthographicCamera2D(pos, { aspectRatio, 1.f }),
+		m_aspectRatio(aspectRatio), m_zoom(0.f)
 	{}
 
 	OrthoCamController2D::OrthoCamController2D(chcl::Rect viewArea) :
-		m_aspectRatio(viewArea.m_size.x / viewArea.m_size.y), m_zoom(2 * m_aspectRatio / viewArea.m_size.x),
-		m_camera(viewArea)
+		OrthographicCamera2D(viewArea),
+		m_aspectRatio(viewArea.m_size.x / viewArea.m_size.y), m_zoom(2 * m_aspectRatio / viewArea.m_size.x)
 	{}
 
 	void OrthoCamController2D::onUpdate()
 	{
-		chcl::Vector2<float> currentPos = m_camera.getPos();
-
-		if (Input::IsKeyPressed(NE_KEY_S))
+		if (Input::IsKeyDown(NE_KEY_S))
 		{
-			currentPos.y -= m_cameraTranslationSpeed * m_zoom;
+			m_pos.y -= m_cameraTranslationSpeed * m_zoom;
 		}
 
-		if (Input::IsKeyPressed(NE_KEY_W))
+		if (Input::IsKeyDown(NE_KEY_W))
 		{
-			currentPos.y += m_cameraTranslationSpeed * m_zoom;;
+			m_pos.y += m_cameraTranslationSpeed * m_zoom;;
 		}
 
-		if (Input::IsKeyPressed(NE_KEY_A))
+		if (Input::IsKeyDown(NE_KEY_A))
 		{
-			currentPos.x -= m_cameraTranslationSpeed * m_zoom;;
+			m_pos.x -= m_cameraTranslationSpeed * m_zoom;;
 		}
 
-		if (Input::IsKeyPressed(NE_KEY_D))
+		if (Input::IsKeyDown(NE_KEY_D))
 		{
-			currentPos.x += m_cameraTranslationSpeed * m_zoom;;
+			m_pos.x += m_cameraTranslationSpeed * m_zoom;;
 		}
 
-		m_camera.setPos(currentPos);
+		recalculateViewMatrix();
 	}
 
 	bool OrthoCamController2D::onEvent(Event &e)
@@ -59,6 +57,6 @@ namespace Nest
 
 	void OrthoCamController2D::updateCamera()
 	{
-		m_camera.setSize(chcl::Vector2<float>(m_aspectRatio, 1.f) * m_zoom);
+		setSize(chcl::Vector2<float>(m_aspectRatio, 1.f) * m_zoom);
 	}
 }

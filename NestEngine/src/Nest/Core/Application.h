@@ -16,7 +16,7 @@ namespace Nest
 	{
 	public:
 		Application();
-		Application(const std::string &windowTitle, unsigned int windowWidth, unsigned int windowHeight);
+		Application(const std::string &windowTitle, unsigned int windowWidth, unsigned int windowHeight, bool resizable = false);
 		virtual ~Application();
 
 		void pushLayer(Layer *layer);

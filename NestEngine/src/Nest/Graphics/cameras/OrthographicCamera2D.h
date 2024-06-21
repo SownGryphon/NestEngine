@@ -2,7 +2,7 @@
 
 #include <geometry/Vector2.h>
 #include <geometry/Rect.h>
-#include <maths/SquareMatrix.h>
+#include <maths/Mat4.h>
 
 namespace Nest
 {
@@ -31,7 +31,7 @@ namespace Nest
 		OrthographicCamera2D& operator=(const OrthographicCamera2D &camera) = default;
 		OrthographicCamera2D& operator=(OrthographicCamera2D &&camera) = default;
 
-	private:
+	protected:
 		chcl::Vector2<float> m_pos, m_size;
 		float m_rotation;
 		chcl::Mat4 m_VPM;

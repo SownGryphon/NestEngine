@@ -48,19 +48,31 @@ namespace Nest
 		}
 	}
 
-	Shader::Shader(const std::string &vertexSource, const std::string &fragmentSource)
+	Shader::Shader(std::vector<std::string> sourceFiles)
 	{
-		unsigned int vShader = CompileShader(vertexSource, GL_VERTEX_SHADER);
-		unsigned int fShader = CompileShader(fragmentSource, GL_FRAGMENT_SHADER);
+		std::unordered_map<unsigned int, std::string> shaderSources;
+		for (const std::string &file : sourceFiles)
+		{
+			auto fileShaderSources = PreProcess(file);
+			shaderSources.insert(fileShaderSources.begin(), fileShaderSources.end());
+		}
 
 		m_rendererID = glCreateProgram();
-		glAttachShader(m_rendererID, vShader);
-		glAttachShader(m_rendererID, fShader);
+		std::vector<unsigned int> shaderIDs;
+		for (const auto &shaderSource : shaderSources)
+		{
+			unsigned int shader = CompileShader(shaderSource.second, shaderSource.first);
+			glAttachShader(m_rendererID, shader);
+			shaderIDs.push_back(shader);
+		}
+		glLinkProgram(m_rendererID);
 		glLinkProgram(m_rendererID);
 		glValidateProgram(m_rendererID);
 
-		glDeleteShader(vShader);
-		glDeleteShader(fShader);
+		for (unsigned int i : shaderIDs)
+		{
+			glDeleteShader(i);
+		}
 	}
 
 	Shader::~Shader()
@@ -73,9 +85,13 @@ namespace Nest
 		return createRef<Shader>(ReadFile(sourcePath));
 	}
 
-	Ref<Shader> Shader::FromFile(const std::string &vertPath, const std::string &fragPath)
+	Ref<Shader> Shader::FromFile(std::vector<std::string> sourceFiles)
 	{
-		return createRef<Shader>(ReadFile(vertPath), ReadFile(fragPath));
+		for (int i = 0; i < sourceFiles.size(); ++i)
+		{
+			sourceFiles[i] = ReadFile(sourceFiles[i]);
+		}
+		return createRef<Shader>(sourceFiles);
 	}
 
 	void Shader::bind() const
@@ -173,7 +189,7 @@ namespace Nest
 	{
 		if (token == "vertex" || token == "vert")
 			return GL_VERTEX_SHADER;
-		if (token == "geometry" || token == "geo")
+		if (token == "geometry" || token == "geom")
 			return GL_GEOMETRY_SHADER;
 		if (token == "fragment" || token == "frag" || token == "pixel")
 			return GL_FRAGMENT_SHADER;
@@ -188,7 +204,7 @@ namespace Nest
 	{
 		std::unordered_map<unsigned int, std::string> shaderSources;
 
-		const char *typeToken = "//#shader";
+		const char *typeToken = "@shader";
 		size_t typeTokenLen = strlen(typeToken);
 		size_t pos = source.find(typeToken, 0);
 		while (pos != std::string::npos)
@@ -222,6 +238,7 @@ namespace Nest
 			char *msg = (char*)_malloca(length);
 			glGetShaderInfoLog(shader, length, &length, msg);
 			NE_ERROR(msg);
+			NE_ASSERT(0, "Shader compile failed.");
 		}
 
 		return shader;

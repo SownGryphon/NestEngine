@@ -36,7 +36,7 @@ namespace Nest
 		virtual EventType getEventType() const = 0;
 		virtual int getCategoryFlags() const = 0;
 
-		inline bool isInCategory(EventCategory category)
+		inline bool isInCategory(EventCategory category) const
 		{
 			return getCategoryFlags() & category;
 		}
