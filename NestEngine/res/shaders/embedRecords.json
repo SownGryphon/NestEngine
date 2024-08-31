@@ -30,5 +30,21 @@
 		"varName": "glslCircle",
 		"charsPerLine": 50,
 		"dataSuffix": "_data"
+	},
+	{
+		"inFile": "TexturedQuad.glsl",
+		"outFilename": "TexturedQuad",
+		"countSuffix": "_count",
+		"varName": "glslTexQuad",
+		"charsPerLine": 0,
+		"dataSuffix": "_data"
+	},
+	{
+		"inFile": "Font.glsl",
+		"outFilename": "Font",
+		"countSuffix": "_count",
+		"varName": "glslFont",
+		"charsPerLine": 50,
+		"dataSuffix": "_data"
 	}
 ]

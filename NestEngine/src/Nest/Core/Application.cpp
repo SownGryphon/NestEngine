@@ -4,7 +4,7 @@
 
 #include <glad/glad.h>
 
-#include "Nest/Graphics/Renderer.h"
+#include "Nest/renderer/Renderer.h"
 #include "Nest/Utils/Time.h"
 #include "Nest/Core/Input.h"
 

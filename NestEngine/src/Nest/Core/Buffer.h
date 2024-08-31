@@ -10,7 +10,7 @@ namespace Nest
 	{
 	public:
 		Buffer() = default;
-		Buffer(size_t bufSize);
+		Buffer(size_t bufSize, const uint8_t *data = nullptr);
 
 		template<typename T>
 		Buffer(const std::vector<T> &dataVec) :
@@ -28,18 +28,38 @@ namespace Nest
 		inline size_t size() const { return m_bytesUsed; }
 		inline size_t reserved() const { return m_reserved; }
 
-		inline void* data() { return m_data; }
-		inline const void* data() const { return m_data; }
+		inline uint8_t* begin() { return m_data; }
+		inline const uint8_t* begin() const { return m_data; }
+		inline uint8_t* end() { return m_data + m_bytesUsed; }
+		inline const uint8_t* end() const { return m_data + m_bytesUsed; }
+
+		inline uint8_t& operator[](size_t i) { return *(m_data + i); }
+		inline const uint8_t& operator[](size_t i) const { return *(m_data + i); }
 
 		template <typename T>
 		void push_back(const T &obj)
 		{
 			if (m_bytesUsed + sizeof(T) > m_reserved)
-				reserve(3 * m_reserved / 2, true);
+				reserve(3 * (m_reserved + sizeof(T)) / 2, true);
 
-			memcpy((char*)m_data + m_bytesUsed, &obj, sizeof(T));
+			memcpy(m_data + m_bytesUsed, &obj, sizeof(T));
 			m_bytesUsed += sizeof(T);
 		}
+
+		void push_back(const uint8_t *src, size_t byteCount);
+
+		template <typename T>
+		void fill(const T &obj)
+		{
+			if (m_reserved % sizeof(T) != 0)
+				return;
+
+			setBytesUsed(0);
+			for (size_t i = m_reserved / sizeof(T); i--;)
+				push_back(obj);
+		}
+
+		inline void setBytesUsed(size_t bytesUsed) { m_bytesUsed = bytesUsed; }
 
 		void reserve(size_t newSize, bool retainData);
 		void clear();
@@ -78,13 +98,13 @@ namespace Nest
 		{
 			for (size_t i = 0; i < dataVec.size(); ++i)
 			{
-				memcpy((char*)buf.data() + i * stride + offset, &dataVec[i], sizeof(T));
+				memcpy((char*)buf.begin() + i * stride + offset, &dataVec[i], sizeof(T));
 			}
 		}
 
 	private:
 		size_t m_bytesUsed = 0, m_reserved = 0;
-		void *m_data = nullptr;
+		uint8_t *m_data = nullptr;
 
 		template <typename T, typename ...Args>
 		static size_t InterweaveBufSize(const std::vector<T> &dataVec, const std::vector<Args>&... args)

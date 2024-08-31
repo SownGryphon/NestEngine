@@ -16,5 +16,5 @@ private:
 	Nest::PerspectiveCamController3D m_camController;
 
 	Nest::Ref<Nest::Shader> m_shader3D, m_teapotShader;
-	Nest::StaticMesh m_teapot, m_teapotLowDetail, m_suzanne;
+	Nest::StaticMesh m_teapot, m_suzanne;
 };

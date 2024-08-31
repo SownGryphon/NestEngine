@@ -10,8 +10,8 @@ public:
 	Sandbox() :
 		Application("Sandbox Example", 1280, 720)
 	{
-		//pushLayer(new SandboxLayer());
-		pushLayer(new SandboxLayer3D());
+		pushLayer(new SandboxLayer());
+		//pushLayer(new SandboxLayer3D());
 	}
 
 	~Sandbox()

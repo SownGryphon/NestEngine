@@ -16,8 +16,8 @@ project "NestGLSLEmbedder"
 	cppdialect "C++20"
 	staticruntime "On"
 
-	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+	targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
 
 	targetname("nglembed")
 
@@ -89,7 +89,7 @@ project "Sandbox"
 		}
 
 	filter "configurations:Debug"
-		defines "NE_DEBUG"
+		defines { "NE_DEBUG", "NE_ENABLE_ASSERTS" }
 		symbols "On"
 
 	filter "configurations:Release"

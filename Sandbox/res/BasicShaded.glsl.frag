@@ -12,7 +12,7 @@ layout(location = 0) out vec4 color;
 
 void main()
 {
-	float lightMult = u_globalLight - (1 - u_globalLight) * 0.5 * dot(normal, lightDir);
+	float lightMult = u_globalLight - (1 - u_globalLight) * 0.5 * dot(normalize(normal), lightDir);
 	color = vec4(u_color.xyz * lightMult, u_color.w);
 	//color = vec4(normal, 1);
 	//color = vec4(-normal, 1);

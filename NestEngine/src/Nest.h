@@ -4,6 +4,8 @@
 
 #include "Nest/Core/Core.h"
 
+#include "Nest/Core/DataType.h"
+
 #include "Nest/Core/Window.h"
 #include "Nest/Core/Application.h"
 #include "Nest/Core/Layer.h"
@@ -20,20 +22,33 @@
 #include "Nest/Utils/Random.h"
 #include "Nest/Utils/Time.h"
 
-// ----- Graphics ------
-#include "Nest/Graphics/Shader.h"
-#include "Nest/Graphics/VertexArray.h"
-#include "Nest/Graphics/IndexBuffer.h"
-#include "Nest/Graphics/Texture.h"
+// ----- Renderer ------
+#include "Nest/renderer/Shader.h"
+#include "Nest/renderer/VertexArray.h"
+#include "Nest/renderer/IndexBuffer.h"
+#include "Nest/renderer/Texture.h"
 
-#include "Nest/Graphics/RenderCommand.h"
-#include "Nest/Graphics/Renderer.h"
-#include "Nest/Graphics/Renderer2D.h"
-#include "Nest/Graphics/Renderer3D.h"
+#include "Nest/renderer/RenderCommand.h"
+#include "Nest/renderer/Renderer.h"
+#include "Nest/renderer/Renderer2D.h"
+#include "Nest/renderer/Renderer3D.h"
 
-#include "Nest/Graphics/cameras/OrthographicCamera2D.h"
-#include "Nest/Graphics/cameras/OrthoCamController2D.h"
-#include "Nest/Graphics/cameras/PerspectiveCamera3D.h"
-#include "Nest/Graphics/cameras/PerspectiveCamController3D.h"
+#include "Nest/renderer/cameras/OrthographicCamera2D.h"
+#include "Nest/renderer/cameras/OrthoCamController2D.h"
+#include "Nest/renderer/cameras/PerspectiveCamera3D.h"
+#include "Nest/renderer/cameras/PerspectiveCamController3D.h"
 
-#include "Nest/Graphics/StaticMesh.h"
+#include "Nest/renderer/StaticMesh.h"
+
+// ----- Graphics -----
+
+// - Images -
+
+#include "Nest/graphics/Image.h"
+#include "Nest/graphics/PNGLoader.h"
+
+// - Fonts -
+
+#include "Nest/graphics/Font.h"
+
+#include "Nest/graphics/fontLoader/TTFLoader.h"

@@ -2,9 +2,12 @@
 
 #include "geometry/VectorN.h"
 
-Nest::Buffer::Buffer(size_t size)
+Nest::Buffer::Buffer(size_t size, const uint8_t *data)
 {
 	reserve(size, false);
+
+	if (data && m_data)
+		memcpy(m_data, data, size);
 }
 
 Nest::Buffer::Buffer(const Buffer &other) :
@@ -45,12 +48,21 @@ Nest::Buffer& Nest::Buffer::operator=(Buffer &&other) noexcept
 	return *this;
 }
 
+void Nest::Buffer::push_back(const uint8_t *src, size_t byteCount)
+{
+	if (m_bytesUsed + byteCount > m_reserved)
+		reserve(3 * (m_reserved + byteCount) / 2, true);
+
+	memcpy(m_data + m_bytesUsed, src, byteCount);
+	m_bytesUsed += byteCount;
+}
+
 void Nest::Buffer::reserve(size_t newSize, bool retainData)
 {
 	if (newSize <= m_reserved)
 		return;
 	
-	void* newData = operator new(newSize);
+	uint8_t* newData = (uint8_t*)operator new(newSize);
 
 	if (m_data)
 	{
