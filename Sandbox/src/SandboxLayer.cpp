@@ -29,20 +29,19 @@ void SandboxLayer::onUpdate(std::chrono::milliseconds timestep)
 {
 	Nest::RenderCommand::clear();
 
+	
 	Nest::Renderer2D::beginScene(m_camera.getVPM());
+	Nest::Renderer2D::drawTexturedQuad({ 640 - 256, 360 }, { 512, 512 }, m_tex1);
 
-	static float testSize = 5.f;
+	std::string loremIpsum = R"(Lorem ipsum dolor sit amet,
+consectetur adipiscing elit,
+sed do eiusmod tempor incididunt
+ut labore et dolore magna aliqua.)";
 
-	Nest::Renderer2D::drawText({ 50, 100 }, testSize, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", m_testFont);
-	Nest::Renderer2D::drawText({ 50, 250 }, testSize, "abcdefghijklmnopqrstuvwxyz", m_testFont);
-	Nest::Renderer2D::drawText({ 50, 400 }, testSize, "1234567890!@#$%^&*()[]{}<>", m_testFont);
-	Nest::Renderer2D::drawText({ 50, 550 }, testSize, "(*^*)", m_testFont);
+	Nest::Renderer2D::drawText({ 750, 450 }, 100.f, "(*^*)", m_testFont);
+	Nest::Renderer2D::drawText({ 750, 350 }, 40.f, loremIpsum, m_testFont);
 
-	testSize += timestep.count() / 100.f;
-	if (testSize > 200.f)
-		testSize = 5.f;
-
-	static MovingAverage fpsAverage{ 5 };
+	static MovingAverage fpsAverage{ 15 };
 
 	if (timestep.count() > 0)
 		fpsAverage.add(1000.f / float(timestep.count()));
@@ -62,16 +61,9 @@ void SandboxLayer::onUpdate(std::chrono::milliseconds timestep)
 	static Nest::Formatter fpsFormat;
 	Nest::Renderer2D::drawText({ 1100, 700 }, 20, fpsFormat.format("FPS: {:.0}", fpsAverage.get()), m_testFont);
 
-	static float t = 0.f;
-
-	//Nest::Renderer2D::drawText({ 100, 150 }, 500.f + 2.f * std::sin(t), "8", m_testFont);
-
-	t += timestep.count() / 3000.f;
-
 	//Nest::Renderer2D::drawCircle({ 1280 / 2, 720 / 2 }, { 1280 - 2, 720 - 2 }, 1, 0.f);
 	//Nest::Renderer2D::drawLineQuad({ 200, 500 }, { 150, 40 }, chcl::toRadians(30.f));
 	//Nest::Renderer2D::drawQuad({ 200, 200 }, { 200, 150 });
-	//Nest::Renderer2D::drawTexturedQuad({ 640 - 256, 360 }, { 512, 512 }, m_tex1);
 	//Nest::Renderer2D::drawTexturedQuad({ 960, 360 }, { 640, 480 }, m_tex2);
 	//Nest::Renderer2D::drawTexturedQuad({ 640, 360 }, { 160, 160 }, m_tex3);
 	//Nest::Renderer2D::drawTexturedQuad({ 800, 360 }, { 160, 160 }, m_tex4);
