@@ -6,10 +6,11 @@
 #include <geometry/Vector4.h>
 
 #include "Nest/Core/Core.h"
-#include "Nest/renderer/Shader.h"
-#include "Nest/renderer/Texture.h"
+#include "Nest/Renderer/Shader.h"
+#include "Nest/Renderer/Texture.h"
 
-#include "Nest/graphics/Font.h"
+#include "Nest/Graphics/Font.h"
+#include "Nest/Graphics/TextBox.h"
 
 namespace Nest
 {
@@ -32,6 +33,8 @@ namespace Nest
 		void drawTexturedQuad(chcl::Vector2<float> pos, chcl::Vector2<float> size, Ref<Texture> texture);
 
 		void drawText(chcl::Vector2<float> pos, float pnt, const std::string &text, Ref<Font> font);
+
+		void drawTextBox(const TextBox &box);
 
 		void drawFullScreenQuad();
 		void drawFullScreenQuad(Ref<Shader> shader);

@@ -23,7 +23,10 @@ Nest::TTFLoader::TTFLoader(const std::string &m_fontFilename) :
 	m_result = createRef<Font>();
 
 	if (!m_fontFile.is_open())
+	{
+		NE_ASSERT(0, "Invalid font file.");
 		return;
+	}
 
 	uint32_t scalerType = m_fontFile.readInt<uint32_t>();
 	uint16_t numTables = m_fontFile.readInt<uint16_t>(),
@@ -166,6 +169,13 @@ void Nest::TTFLoader::processCmap()
 
 	switch (format)
 	{
+		case 0:
+			m_fontFile.seekg(4, chcl::BinaryFile::cur);
+			for (unsigned int i = 0; i < 256; ++i)
+			{
+				m_result->m_charMapping[i] = m_fontFile.readInt<uint8_t>();
+			}
+			break;
 		case 4:
 		{
 			uint16_t length = m_fontFile.readInt<uint16_t>();
@@ -210,7 +220,7 @@ void Nest::TTFLoader::processCmap()
 				{
 
 					if (idRangeOffset[i] == 0)
-						m_result->m_charMapping[j] = j + idDelta[i];
+						m_result->m_charMapping[(char)j] = (size_t)j + idDelta[i];
 					else
 					{
 						size_t byteOffset = ((size_t)idRangeOffset[i] / 2 + j - startCode[i]) * 2;
@@ -219,7 +229,7 @@ void Nest::TTFLoader::processCmap()
 						m_fontFile.seekg(byteOffset - 2, std::ifstream::cur);
 						uint16_t glyphID = m_fontFile.readInt<uint16_t>();
 						if (glyphID != 0)
-							m_result->m_charMapping[j] = glyphID + idDelta[i];
+							m_result->m_charMapping[(char)j] = (size_t)glyphID + idDelta[i];
 						m_fontFile.seekg(prevPos);
 					}
 				}
@@ -296,7 +306,7 @@ void Nest::TTFLoader::processGlyf()
 		allContourPoints.insert(allContourPoints.end(), contourPoints.begin(), contourPoints.end());
 	}
 
-	m_result->m_contourPoints = createRef<ShaderStorageBuffer>((const char*)allContourPoints.data(), allContourPoints.size() * sizeof(ContourPoint));
+	m_result->m_contourPoints = createRef<ShaderStorageBuffer>(allContourPoints.size() * sizeof(ContourPoint), (const char*)allContourPoints.data());
 }
 
 void Nest::TTFLoader::processHhea()

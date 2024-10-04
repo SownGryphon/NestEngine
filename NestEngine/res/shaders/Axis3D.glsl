@@ -1,7 +1,7 @@
 @shader vertex
 #version 330 core
 
-layout(location = 0) in vec4 pos;
+in vec4 pos;
 
 out vec3 worldPos;
 
@@ -15,7 +15,7 @@ void main()
 }
 
 @shader geom
-#version 330 core
+#version 440 core
 
 layout(lines) in;
 layout(line_strip, max_vertices = 2) out;
@@ -39,7 +39,7 @@ void main()
 
 in vec4 gs_color;
 
-layout(location = 0) out vec4 color;
+out vec4 color;
 
 void main()
 {

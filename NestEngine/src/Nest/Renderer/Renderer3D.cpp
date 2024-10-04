@@ -76,7 +76,10 @@ void Nest::Renderer3D::init()
 		};
 		s_data->lineCubeIndices = createRef<IndexBuffer>(24, lineCubeIndexData);
 
-		s_data->cubeShader = createRef<Shader>(std::vector<std::string>({ glslBasicVert_data, glslBasicFrag_data }));
+		s_data->cubeShader = createRef<Shader>(std::vector<Shader::ShaderSource>({
+			{ glslBasicVert_data, "Basic Vertex"},
+			{ glslBasicFrag_data, "Basic Shader" }
+		}));
 
 		chcl::Vector3<float> axisVertexData[4] = {
 			{ 0.f, 0.f, 0.f },
@@ -96,7 +99,7 @@ void Nest::Renderer3D::init()
 		};
 		s_data->axisIndices = createRef<IndexBuffer>(6, axisIndexData);
 
-		s_data->axisShader = createRef<Shader>(glslAxis3D_data);
+		s_data->axisShader = createRef<Shader>(Shader::ShaderSource{ glslAxis3D_data, "Axis" });
 	}
 }
 

@@ -4,26 +4,8 @@
 
 namespace Nest
 {
-	IndexBuffer::IndexBuffer(size_t count, unsigned int *indices)
-		: m_count(count)
-	{
-		glGenBuffers(1, &m_rendererID);
-		bind();
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(unsigned int), indices, GL_STATIC_DRAW);
-	}
-
-	IndexBuffer::~IndexBuffer()
-	{
-		glDeleteBuffers(1, &m_rendererID);
-	}
-
-	void IndexBuffer::bind() const
-	{
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_rendererID);
-	}
-
-	void IndexBuffer::unbind() const
-	{
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	}
+	IndexBuffer::IndexBuffer(size_t count, unsigned int *indices) :
+		GraphicsBuffer(count * sizeof(unsigned int), indices),
+		m_count(count)
+	{}
 }

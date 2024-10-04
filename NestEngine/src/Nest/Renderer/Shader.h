@@ -18,19 +18,28 @@ namespace Nest
 {
 	class Shader
 	{
+	private:
 		unsigned int m_rendererID;
+		static unsigned int s_currentShader;
 		std::unordered_map<std::string, int> m_uniformLocations;
 
 	public:
+
+		struct ShaderSource
+		{
+			std::string content;
+			std::string name;
+		};
+
 		Shader();
-		Shader(const std::string &source);
-		Shader(std::vector<std::string> sourceFiles);
+		Shader(const ShaderSource &rawSource);
+		Shader(const std::vector<ShaderSource> &rawSources);
 		Shader(const Shader&) = delete;
 		Shader(Shader&&) = default;
 		~Shader();
 
 		static Ref<Shader> FromFile(const std::string &sourcePath);
-		static Ref<Shader> FromFile(std::vector<std::string> sourceFilePaths);
+		static Ref<Shader> FromFile(std::vector<std::string> sourcePaths);
 
 		void bind() const;
 		void unbind() const;
@@ -65,9 +74,12 @@ namespace Nest
 
 		/** @brief Returns file contents as a string
 		 *	@param path Filepath.
-		 *	@returns File contents as string.
+		 *	@returns File contents as a ShaderSource struct.
 		 */
-		static std::string ReadFile(const std::string &path);
+		static ShaderSource ReadFile(const std::string &path);
+
+
+		// ===== SHADER COMPILATION =====
 
 		/**
 		 * @brief Splits shader file into shader types
@@ -81,7 +93,7 @@ namespace Nest
 		 * @param source Shader source (not filepath)
 		 * @return A map containing the shader source for each shader type
 		*/
-		static std::unordered_map<unsigned int, std::string> PreProcess(const std::string &source);
-		static unsigned int CompileShader(const std::string &source, unsigned int type);
+		static std::unordered_map<unsigned int, ShaderSource> PreProcess(const ShaderSource &source);
+		static unsigned int CompileShader(const ShaderSource &source, unsigned int type);
 	};
 }

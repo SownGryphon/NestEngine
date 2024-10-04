@@ -72,13 +72,16 @@ namespace Nest
 			s_data->windowSize.x = Application::GetInstance().getWindow().getWidth();
 			s_data->windowSize.y = Application::GetInstance().getWindow().getHeight();
 
-			s_data->quadShader = createRef<Shader>(std::vector<std::string>({ glslBasicVert_data, glslBasicFrag_data }));
+			s_data->quadShader = createRef<Shader>(std::vector<Shader::ShaderSource>({
+				{ glslBasicVert_data, "Basic Vertex" },
+				{ glslBasicFrag_data, "Basic Fragment" }
+			}));
 
-			s_data->circleShader = createRef<Shader>(glslCircle_data);
+			s_data->circleShader = createRef<Shader>(Shader::ShaderSource{ glslCircle_data, "Circle" });
 
-			s_data->texturedQuadShader = createRef<Shader>(glslTexQuad_data);
+			s_data->texturedQuadShader = createRef<Shader>(Shader::ShaderSource{ glslTexQuad_data, "Textured Quad" });
 
-			s_data->textShader = createRef<Shader>(glslFont_data);
+			s_data->textShader = createRef<Shader>(Shader::ShaderSource{ glslFont_data, "Font" });
 		}
 	}
 
@@ -90,19 +93,22 @@ namespace Nest
 
 	void Renderer2D::beginScene(const chcl::Mat4 &mvp)
 	{
-		s_data->quadShader->bind();
-		s_data->quadShader->setUniformMat4("u_MVP", mvp);
+		if (mvp != MVP)
+		{
+			s_data->quadShader->bind();
+			s_data->quadShader->setUniformMat4("u_MVP", mvp);
 
-		s_data->circleShader->bind();
-		s_data->circleShader->setUniformMat4("u_MVP", mvp);
+			s_data->circleShader->bind();
+			s_data->circleShader->setUniformMat4("u_MVP", mvp);
 
-		s_data->texturedQuadShader->bind();
-		s_data->texturedQuadShader->setUniformMat4("u_MVP", mvp);
+			s_data->texturedQuadShader->bind();
+			s_data->texturedQuadShader->setUniformMat4("u_MVP", mvp);
 
-		s_data->textShader->bind();
-		s_data->textShader->setUniformMat4("u_MVP", mvp);
+			s_data->textShader->bind();
+			s_data->textShader->setUniformMat4("u_MVP", mvp);
 
-		MVP = mvp;
+			MVP = mvp;
+		}
 
 		RenderCommand::setDepthEnabled(false);
 	}
@@ -287,4 +293,18 @@ void Nest::Renderer2D::drawText(chcl::Vector2<float> pos, float pnt, const std::
 	textIB->bind();
 
 	RenderCommand::drawTrianglesIndexed(textIB);
+}
+
+void Nest::Renderer2D::drawTextBox(const TextBox &box)
+{
+	s_data->textShader->bind();
+	s_data->textShader->setUniformMat4("u_transform", box.getTransform());
+
+	box.getFont()->getFontBuffer()->bind();
+	s_data->textShader->bindBuffer(box.getFont()->getFontBuffer(), 1);
+
+	box.getVA()->bind();
+	box.getIB()->bind();
+
+	RenderCommand::drawTrianglesIndexed(box.getIB());
 }

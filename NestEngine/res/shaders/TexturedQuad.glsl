@@ -1,8 +1,8 @@
 @shader vert
 #version 330 core
 
-layout(location = 0) in vec2 pos;
-layout(location = 1) in vec2 uv;
+in vec2 pos;
+in vec2 uv;
 
 out vec2 texUV;
 
@@ -22,7 +22,7 @@ in vec2 texUV;
 
 uniform sampler2D u_texture;
 
-layout(location = 0) out vec4 color;
+out vec4 color;
 
 void main()
 {

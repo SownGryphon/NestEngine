@@ -1,6 +1,7 @@
 #include <Nest.h>
 #include <Nest/Core/EntryPoint.h>
 
+#include "ProfileLayer.h"
 #include "SandboxLayer.h"
 #include "SandboxLayer3D.h"
 
@@ -10,6 +11,7 @@ public:
 	Sandbox() :
 		Application("Sandbox Example", 1280, 720)
 	{
+		//pushLayer(new ProfileLayer());
 		pushLayer(new SandboxLayer());
 		//pushLayer(new SandboxLayer3D());
 	}

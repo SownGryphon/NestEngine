@@ -2,6 +2,7 @@
 
 #include "Nest/Core/Core.h"
 
+#include "Nest/Renderer/GraphicsBuffer.h"
 #include "VertexBuffer.h"
 #include "VertexBufferLayout.h"
 
@@ -23,6 +24,7 @@ namespace Nest
 
 	private:
 		unsigned int m_rendererID = 0;
+		static unsigned int s_currentBuffer;
 
 		Ref<VertexBuffer> m_vBuffer;
 	};

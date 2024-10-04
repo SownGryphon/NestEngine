@@ -4,6 +4,8 @@
 
 namespace Nest
 {
+	unsigned int VertexArray::s_currentBuffer = 0;
+
 	VertexArray::VertexArray()
 	{
 		glGenVertexArrays(1, &m_rendererID);
@@ -16,12 +18,20 @@ namespace Nest
 
 	void VertexArray::bind() const
 	{
-		glBindVertexArray(m_rendererID);
+		if (s_currentBuffer != m_rendererID)
+		{
+			s_currentBuffer = m_rendererID;
+			glBindVertexArray(m_rendererID);
+		}
 	}
 
 	void VertexArray::unbind() const
 	{
-		glBindVertexArray(0);
+		if (s_currentBuffer != 0)
+		{
+			s_currentBuffer = 0;
+			glBindVertexArray(0);
+		}
 	}
 
 	void VertexArray::bindBuffers(const Ref<VertexBuffer> &vBuffer, const Ref<VertexBufferLayout> &vbLayout)
@@ -43,11 +53,11 @@ namespace Nest
 				case DataType::SignedShort:
 				case DataType::UnsignedInt:
 				case DataType::SignedInt:
-					glVertexAttribIPointer((GLuint)i, (GLuint)layout[i].count, toGAPINativeType(layout[i].type), (GLuint)vbLayout->getStride(), (void*)offset);
+					glVertexAttribIPointer((GLuint)i, (GLuint)layout[i].count, (GLenum)toGAPINativeType(layout[i].type), (GLuint)vbLayout->getStride(), (void*)offset);
 					break;
 				case DataType::Float:
 				case DataType::Double:
-					glVertexAttribPointer((GLuint)i, (GLuint)layout[i].count, toGAPINativeType(layout[i].type), layout[i].normalized ? GL_TRUE : GL_FALSE, (GLuint)vbLayout->getStride(), (void*)offset);
+					glVertexAttribPointer((GLuint)i, (GLuint)layout[i].count, (GLenum)toGAPINativeType(layout[i].type), layout[i].normalized ? GL_TRUE : GL_FALSE, (GLuint)vbLayout->getStride(), (void*)offset);
 					break;
 			}
 

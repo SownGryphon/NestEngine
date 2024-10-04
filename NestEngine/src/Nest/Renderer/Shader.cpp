@@ -8,14 +8,16 @@
 
 namespace Nest
 {
+	unsigned int Shader::s_currentShader = 0;
+
 	Shader::Shader()
 	{
 		m_rendererID = 0;
 	}
 
-	Shader::Shader(const std::string &source)
+	Shader::Shader(const ShaderSource &rawSource)
 	{
-		auto shaderSources = PreProcess(source);
+		auto shaderSources = PreProcess(rawSource);
 
 		m_rendererID = glCreateProgram();
 		std::vector<unsigned int> shaderIDs;
@@ -48,12 +50,12 @@ namespace Nest
 		}
 	}
 
-	Shader::Shader(std::vector<std::string> sourceFiles)
+	Shader::Shader(const std::vector<ShaderSource> &rawSources)
 	{
-		std::unordered_map<unsigned int, std::string> shaderSources;
-		for (const std::string &file : sourceFiles)
+		std::unordered_map<unsigned int, ShaderSource> shaderSources;
+		for (const ShaderSource &source : rawSources)
 		{
-			auto fileShaderSources = PreProcess(file);
+			auto fileShaderSources = PreProcess(source);
 			shaderSources.insert(fileShaderSources.begin(), fileShaderSources.end());
 		}
 
@@ -87,21 +89,31 @@ namespace Nest
 
 	Ref<Shader> Shader::FromFile(std::vector<std::string> sourceFiles)
 	{
+		std::vector<ShaderSource> shaderSources;
+		shaderSources.reserve(sourceFiles.size());
 		for (int i = 0; i < sourceFiles.size(); ++i)
 		{
-			sourceFiles[i] = ReadFile(sourceFiles[i]);
+			shaderSources.push_back(std::move(ReadFile(sourceFiles[i])));
 		}
-		return createRef<Shader>(sourceFiles);
+		return createRef<Shader>(shaderSources);
 	}
 
 	void Shader::bind() const
 	{
-		glUseProgram(m_rendererID);
+		if (s_currentShader != m_rendererID)
+		{
+			s_currentShader = m_rendererID;
+			glUseProgram(m_rendererID);
+		}
 	}
 
 	void Shader::unbind() const
 	{
-		glUseProgram(0);
+		if (s_currentShader != 0)
+		{
+			s_currentShader = 0;
+			glUseProgram(0);
+		}
 	}
 
 	void Shader::setUniform1f(const std::string &name, float v)
@@ -178,7 +190,7 @@ namespace Nest
 		return location;
 	}
 
-	std::string Shader::ReadFile(const std::string &path)
+	Shader::ShaderSource Shader::ReadFile(const std::string &path)
 	{
 		std::ifstream file(path);
 		std::string result, line;
@@ -187,7 +199,16 @@ namespace Nest
 			result += line;
 			result += '\n';
 		}
-		return result;
+
+		size_t nameBegin = path.find_last_of("/\\");
+		if (nameBegin == std::string::npos)
+			nameBegin = 0;
+		size_t nameEnd = path.find('.', nameBegin);
+		size_t count = (nameEnd == std::string::npos) ? std::string::npos : nameEnd - nameBegin;
+
+		std::string shaderName = path.substr(nameBegin, count);
+
+		return { result, shaderName };
 	}
 
 	static unsigned int shaderTokenToType(const std::string &token)
@@ -205,32 +226,40 @@ namespace Nest
 		return 0;
 	}
 
-	std::unordered_map<unsigned int, std::string> Shader::PreProcess(const std::string &source)
+	std::unordered_map<unsigned int, Shader::ShaderSource> Shader::PreProcess(const ShaderSource &source)
 	{
-		std::unordered_map<unsigned int, std::string> shaderSources;
+		std::unordered_map<unsigned int, ShaderSource> shaderSources;
 
 		const char *typeToken = "@shader";
 		size_t typeTokenLen = strlen(typeToken);
-		size_t pos = source.find(typeToken, 0);
+		size_t pos = source.content.find(typeToken, 0);
 		while (pos != std::string::npos)
 		{
-			size_t eol = source.find_first_of("\n\r", pos);
+			size_t eol = source.content.find_first_of("\n\r", pos);
 			size_t begin = pos + typeTokenLen + 1;
-			std::string type = source.substr(begin, eol - begin);
+			std::string type = source.content.substr(begin, eol - begin);
 
-			size_t nextLineBegin = source.find_first_not_of("\n\r", eol);
-			pos = source.find(typeToken, nextLineBegin);
+			size_t nextLineBegin = source.content.find_first_not_of("\n\r", eol);
+			pos = source.content.find(typeToken, nextLineBegin);
 
-			shaderSources[shaderTokenToType(type)] = (pos == std::string::npos) ? source.substr(nextLineBegin) : source.substr(nextLineBegin, pos - nextLineBegin);
+			if (pos == std::string::npos)
+			{
+				shaderSources[shaderTokenToType(type)].content = source.content.substr(nextLineBegin);
+			}
+			else
+			{
+				shaderSources[shaderTokenToType(type)].content = source.content.substr(nextLineBegin, pos - nextLineBegin);
+			}
+			shaderSources[shaderTokenToType(type)].name = source.name;
 		}
 
 		return shaderSources;
 	}
 
-	unsigned int Shader::CompileShader(const std::string &source, unsigned int type)
+	unsigned int Shader::CompileShader(const ShaderSource &source, unsigned int type)
 	{
 		unsigned int shader = glCreateShader(type);
-		const char* src = source.c_str();
+		const char* src = source.content.c_str();
 		glShaderSource(shader, 1, &src, nullptr);
 		glCompileShader(shader);
 
@@ -243,7 +272,7 @@ namespace Nest
 			char *msg = (char*)_malloca(length);
 			glGetShaderInfoLog(shader, length, &length, msg);
 			NE_ERROR(msg);
-			NE_ASSERT(0, "Shader compile failed.");
+			NE_ASSERT(0, "Failed to compile shader \"{}\".", source.name);
 		}
 
 		return shader;

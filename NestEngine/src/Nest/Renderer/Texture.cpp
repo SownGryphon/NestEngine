@@ -9,9 +9,11 @@ Nest::Texture::Texture()
 	glGenTextures(1, &m_rendererID);
 }
 
-Nest::Texture::Texture(Texture &&tex)
+Nest::Texture::Texture(Texture &&tex) noexcept
 {
 	m_rendererID = tex.m_rendererID;
+	m_width = tex.m_width;
+	m_height = tex.m_height;
 	tex.m_rendererID = 0;
 }
 
@@ -22,6 +24,9 @@ Nest::Texture::~Texture()
 
 void Nest::Texture::setData(size_t width, size_t height, DataType dataType, uint8_t pixelChannels, const void *data)
 {
+	m_width = width;
+	m_height = height;
+
 	bind(0);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	glPixelStorei(GL_UNPACK_SWAP_BYTES, 1);
@@ -34,7 +39,7 @@ void Nest::Texture::setData(chcl::Vector2<size_t> size, DataType dataType, uint8
 	setData(size.x, size.y, dataType, pixelChannels, data);
 }
 
-void Nest::Texture::bind(unsigned int textureUnit)
+void Nest::Texture::bind(unsigned int textureUnit) const
 {
 	glActiveTexture(GL_TEXTURE0 + textureUnit);
 	glBindTexture(GL_TEXTURE_2D, m_rendererID);
@@ -42,7 +47,7 @@ void Nest::Texture::bind(unsigned int textureUnit)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 }
 
-Nest::Texture& Nest::Texture::operator=(Texture &&other)
+Nest::Texture& Nest::Texture::operator=(Texture &&other) noexcept
 {
 	unsigned int tempID = m_rendererID;
 	m_rendererID = other.m_rendererID;

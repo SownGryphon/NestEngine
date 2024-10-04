@@ -25,7 +25,7 @@ void Nest::Font::renderText(const std::string &text, chcl::Vector2<float> pos)
 	m_contourPoints->bind();
 	s_fontShader->bindBuffer(m_contourPoints, 1);
 
-	Renderer::drawPoints(s_fontShader, vao, text.length());
+	Renderer::drawPoints(s_fontShader, vao, (unsigned int) text.length());
 }
 
 Nest::Ref<Nest::VertexArray> Nest::Font::generateVertexArray(const std::string &text)
@@ -87,12 +87,12 @@ Nest::Ref<Nest::IndexBuffer> Nest::Font::generateIndexBuffer(const std::string &
 	indices.reserve(text.length() * 6);
 	for (size_t i = 0; i < text.length(); ++i)
 	{
-		indices.push_back(i * 4);
-		indices.push_back(i * 4 + 1);
-		indices.push_back(i * 4 + 2);
-		indices.push_back(i * 4 + 2);
-		indices.push_back(i * 4 + 1);
-		indices.push_back(i * 4 + 3);
+		indices.push_back((unsigned int)i * 4);
+		indices.push_back((unsigned int)i * 4 + 1);
+		indices.push_back((unsigned int)i * 4 + 2);
+		indices.push_back((unsigned int)i * 4 + 2);
+		indices.push_back((unsigned int)i * 4 + 1);
+		indices.push_back((unsigned int)i * 4 + 3);
 	}
 
 	//indices.push_back(1);

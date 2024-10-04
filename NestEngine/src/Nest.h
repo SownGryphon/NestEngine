@@ -23,32 +23,48 @@
 #include "Nest/Utils/Time.h"
 
 // ----- Renderer ------
-#include "Nest/renderer/Shader.h"
-#include "Nest/renderer/VertexArray.h"
-#include "Nest/renderer/IndexBuffer.h"
-#include "Nest/renderer/Texture.h"
+#include "Nest/Renderer/Shader.h"
+#include "Nest/Renderer/VertexArray.h"
+#include "Nest/Renderer/IndexBuffer.h"
+#include "Nest/Renderer/Texture.h"
 
-#include "Nest/renderer/RenderCommand.h"
-#include "Nest/renderer/Renderer.h"
-#include "Nest/renderer/Renderer2D.h"
-#include "Nest/renderer/Renderer3D.h"
+#include "Nest/Renderer/RenderCommand.h"
+#include "Nest/Renderer/Renderer.h"
+#include "Nest/Renderer/Renderer2D.h"
+#include "Nest/Renderer/Renderer3D.h"
 
-#include "Nest/renderer/cameras/OrthographicCamera2D.h"
-#include "Nest/renderer/cameras/OrthoCamController2D.h"
-#include "Nest/renderer/cameras/PerspectiveCamera3D.h"
-#include "Nest/renderer/cameras/PerspectiveCamController3D.h"
+#include "Nest/Renderer/cameras/OrthographicCamera2D.h"
+#include "Nest/Renderer/cameras/OrthoCamController2D.h"
+#include "Nest/Renderer/cameras/PerspectiveCamera3D.h"
+#include "Nest/Renderer/cameras/PerspectiveCamController3D.h"
 
-#include "Nest/renderer/StaticMesh.h"
+#include "Nest/Renderer/StaticMesh.h"
 
 // ----- Graphics -----
 
 // - Images -
 
-#include "Nest/graphics/Image.h"
-#include "Nest/graphics/PNGLoader.h"
+#include "Nest/Graphics/Image.h"
+#include "Nest/Graphics/PNGLoader.h"
 
-// - Fonts -
+// - Text -
 
-#include "Nest/graphics/Font.h"
+#include "Nest/Graphics/Font.h"
 
-#include "Nest/graphics/fontLoader/TTFLoader.h"
+#include "Nest/Graphics/fontLoader/TTFLoader.h"
+
+#include "Nest/Graphics/TextBox.h"
+
+// ===== ECS =====
+
+#include "Nest/ECS/Entity/Entity.h"
+
+#include "Nest/ECS/Component/Component.h"
+#include "Nest/ECS/Component/TextBoxComponent.h"
+#include "Nest/ECS/Component/SpriteComponent.h"
+
+#include "Nest/ECS/System/System.h"
+#include "Nest/ECS/System/TextBoxSystem.h"
+#include "Nest/ECS/System/SpriteSystem.h"
+
+#include "Nest/ECS/Scene.h"

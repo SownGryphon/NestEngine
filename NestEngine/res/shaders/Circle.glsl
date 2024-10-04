@@ -1,12 +1,12 @@
 @shader vertex
 #version 330 core
 
-layout(location = 0) in vec4 pos;
+in vec4 pos;
 
 uniform mat4 u_transform = mat4(1);
 uniform mat4 u_MVP = mat4(1);
 
-layout(location = 0) out vec2 uv;
+out vec2 uv;
 
 void main()
 {
@@ -17,13 +17,13 @@ void main()
 @shader fragment
 #version 330 core
 
-layout(location = 0) in vec2 uv;
+in vec2 uv;
 
 uniform vec4 u_fillColor = vec4(1.f);
 uniform vec4 u_outlineColor = vec4(1.f);
 uniform vec2 u_outlineWidth = vec2(0.f);
 
-layout(location = 0) out vec4 color;
+out vec4 color;
 
 void main()
 {

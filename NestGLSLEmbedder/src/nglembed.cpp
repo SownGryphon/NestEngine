@@ -99,7 +99,7 @@ static void embedFileMenu()
 		}
 		std::cout << (prevFileEmbeds.size() + 1) << ". Embed with new settings.\n";
 
-		int action = integerInput("Select embed settings: ", "", 1, prevFileEmbeds.size() + 1);
+		int action = integerInput("Select embed settings: ", "", 1, (int) (prevFileEmbeds.size() + 1));
 
 		if (action - 1 < prevFileEmbeds.size())
 		{
@@ -192,7 +192,7 @@ static void prevEmbedMenu()
 		}
 		std::cout << (g_previousEmbeds.size() + 1) << ". Back.\n";
 
-		int choice = integerInput("Select previous embed: ", "", 1, g_previousEmbeds.size() + 1) - 1;
+		int choice = integerInput("Select previous embed: ", "", 1, (int) (g_previousEmbeds.size() + 1)) - 1;
 		std::cout << '\n';
 
 		if (choice == g_previousEmbeds.size())
@@ -221,6 +221,15 @@ static void prevEmbedMenu()
 	}
 }
 
+static void reembedAll()
+{
+	for (size_t i = 0; i < g_previousEmbeds.size(); ++i)
+	{
+		std::cout << "Embedding file " << (i + 1) << "/" << g_previousEmbeds.size() << "\n";
+		embedFile(g_previousEmbeds[i]);
+	}
+}
+
 static void mainMenu()
 {
 	bool exitMenu = false;
@@ -230,8 +239,9 @@ static void mainMenu()
 		std::cout << "1. Convert shader to embedded file\n";
 		std::cout << "2. Change config\n";
 		std::cout << "3. View previous file embeds (" << g_previousEmbeds.size() << ")\n";
-		std::cout << "4. Exit application\n";
-		int action = integerInput("Enter next action: ", "", 1, 4);
+		std::cout << "4. Re-embed all previous.\n";
+		std::cout << "5. Exit application\n";
+		int action = integerInput("Enter next action: ", "", 1, 5);
 		std::cout << '\n';
 
 		switch (action)
@@ -246,6 +256,9 @@ static void mainMenu()
 				prevEmbedMenu();
 				break;
 			case 4:
+				reembedAll();
+				break;
+			case 5:
 				exitMenu = true;
 				break;
 		}

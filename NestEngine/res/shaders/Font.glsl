@@ -1,5 +1,5 @@
 @shader vertex
-#version 430 core
+#version 440 core
 
 layout(location = 0) in vec4 pos;
 layout(location = 1) in ivec2 inFPos;
@@ -40,7 +40,7 @@ struct FontPoint
 	int flags;
 };
 
-layout(packed, binding = 1) buffer FontPoints
+readonly layout(packed, binding = 1) buffer FontPoints
 {
 	FontPoint fontPoints[];
 };

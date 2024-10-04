@@ -9,9 +9,9 @@ namespace Nest
 	class Layer
 	{
 	public:
-		virtual void onAttach() = 0;
-		virtual void onDetach() = 0;
-		virtual void onUpdate(std::chrono::milliseconds timestep) = 0;
-		virtual void onEvent(Event &e) = 0;
+		virtual void onAttach() {}
+		virtual void onDetach() {}
+		virtual void onUpdate(std::chrono::milliseconds timestep) {}
+		virtual void onEvent(Event &e) {}
 	};
 }
