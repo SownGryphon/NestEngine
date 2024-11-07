@@ -41,7 +41,7 @@ namespace Nest
 		static Ref<Shader> FromFile(const std::string &sourcePath);
 		static Ref<Shader> FromFile(std::vector<std::string> sourcePaths);
 
-		void bind() const;
+		void bind();
 		void unbind() const;
 
 		void setUniform1f(const std::string &name, float v);
@@ -53,6 +53,7 @@ namespace Nest
 		void setUniform4f(const std::string &name, chcl::Vector4<float> v);
 
 		void setUniform1i(const std::string &name, int v);
+		void setUniform1ui(const std::string &name, unsigned int v);
 
 		void setUniform3fArr(const std::string &name, unsigned int count, std::vector<chcl::Vector3<float>> &arr);
 
@@ -93,7 +94,8 @@ namespace Nest
 		 * @param source Shader source (not filepath)
 		 * @return A map containing the shader source for each shader type
 		*/
-		static std::unordered_map<unsigned int, ShaderSource> PreProcess(const ShaderSource &source);
+		static std::unordered_map<unsigned int, ShaderSource> SplitSourceByType(const ShaderSource &source);
+		static void PreProcess(ShaderSource &source);
 		static unsigned int CompileShader(const ShaderSource &source, unsigned int type);
 	};
 }

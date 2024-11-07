@@ -37,7 +37,7 @@ Nest::Ref<Nest::VertexArray> Nest::Font::generateVertexArray(const std::string &
 	for (char c : text)
 	{
 		SimpleGlyph glyph = m_glyphs[m_charMapping[c]];
-		#if 1
+
 		for (uint8_t j = 0; j < 4; ++j)
 		{
 			bool xMin = ~j & BIT(0);
@@ -55,14 +55,6 @@ Nest::Ref<Nest::VertexArray> Nest::Font::generateVertexArray(const std::string &
 			vbData.push_back<uint32_t>(glyph.contourBegin);
 			vbData.push_back<uint32_t>(glyph.numContourPoints);
 		}
-		#endif
-
-		# if 0
-		vbData.push_back<float>(xOff - 0.6f);
-		vbData.push_back<float>(0.f);
-		vbData.push_back<uint32_t>(glyph.contourBegin);
-		vbData.push_back<uint32_t>(glyph.numContourPoints);
-		#endif
 
 		if (c == '\n')
 		{

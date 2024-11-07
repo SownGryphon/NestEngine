@@ -5,6 +5,7 @@
 #include <unordered_map>
 
 #include "EmbedRecord.h"
+#include "EmbedderSettings.h"
 #include "UserInput.h"
 
 std::unordered_map<char, char> specialChars = {
@@ -19,24 +20,19 @@ std::unordered_map<char, char> specialChars = {
 
 std::vector<EmbedConfig> g_previousEmbeds;
 
-struct {
-	std::string inputDir, outputDir;
-	unsigned int charsPerLine = 0;
-	std::string countSuffix = "_count",
-		dataSuffix = "_data";
-} configData;
+EmbedderSettings g_embedderSettings;
 
 static void embedFile(const EmbedConfig &config)
 {
 
 	std::ifstream sourceFile;
-	sourceFile.open(configData.inputDir + '\\' + config.inFilename, std::ios::in | std::ios_base::ate);
+	sourceFile.open(g_embedderSettings.inputDir + '\\' + config.inFilename, std::ios::in | std::ios_base::ate);
 	size_t fileSize = sourceFile.tellg();
 	++fileSize;	// To accout for null terminator
 	sourceFile.seekg(0);
 
 	std::ofstream outputFile;
-	outputFile.open(configData.outputDir + '\\' + config.outFilename + ".h");
+	outputFile.open(g_embedderSettings.outputDir + '\\' + config.outFilename + ".h");
 
 	outputFile << "inline constexpr size_t " << config.varName << config.countSuffix << " = " << fileSize << ";\n";
 	outputFile << "inline constexpr char " << config.varName << config.dataSuffix << "[" << fileSize << "] = {\n\t";
@@ -75,7 +71,7 @@ static void embedFileMenu()
 		if (fileEmbedCfg.inFilename == "")
 			return;
 
-		if (!validatePath(configData.inputDir + '\\' + fileEmbedCfg.inFilename))
+		if (!validatePath(g_embedderSettings.inputDir + '\\' + fileEmbedCfg.inFilename))
 		{
 			std::cout << "File does not exist. Please enter valid file: ";
 			fileEmbedCfg.inFilename = "";
@@ -117,9 +113,9 @@ static void embedFileMenu()
 	if (fileEmbedCfg.varName == "")
 		return;
 
-	fileEmbedCfg.charsPerLine = configData.charsPerLine;
-	fileEmbedCfg.countSuffix = configData.countSuffix;
-	fileEmbedCfg.dataSuffix = configData.dataSuffix;
+	fileEmbedCfg.charsPerLine = g_embedderSettings.charsPerLine;
+	fileEmbedCfg.countSuffix = g_embedderSettings.countSuffix;
+	fileEmbedCfg.dataSuffix = g_embedderSettings.dataSuffix;
 
 	embedFile(fileEmbedCfg);
 
@@ -132,16 +128,16 @@ static void configMenu()
 	while (!exitMenu)
 	{
 		std::cout << "Current config items:\n";
-		std::cout << "1. Input directory: " << configData.inputDir << '\n';
-		std::cout << "2. Output directory: " << configData.outputDir << '\n';
+		std::cout << "1. Input directory: " << g_embedderSettings.inputDir << '\n';
+		std::cout << "2. Output directory: " << g_embedderSettings.outputDir << '\n';
 		std::cout << "3. Maximum characters per line: ";
-		if (configData.charsPerLine == 0)
+		if (g_embedderSettings.charsPerLine == 0)
 			std::cout << "unlimited";
 		else
-			std::cout << configData.charsPerLine;
+			std::cout << g_embedderSettings.charsPerLine;
 		std::cout << '\n';
-		std::cout << "4. File size suffix: " << configData.countSuffix << '\n';
-		std::cout << "5. File data suffix: " << configData.dataSuffix << '\n';
+		std::cout << "4. File size suffix: " << g_embedderSettings.countSuffix << '\n';
+		std::cout << "5. File data suffix: " << g_embedderSettings.dataSuffix << '\n';
 
 		int action = integerInput("Select config variable to edit (6 to exit): ", "", 1, 6);
 		std::cout << '\n';
@@ -149,26 +145,26 @@ static void configMenu()
 		switch (action)
 		{
 			case 1:
-				configData.inputDir = directoryInput("Enter input directory: ");
+				g_embedderSettings.inputDir = directoryInput("Enter input directory: ");
 				break;
 			case 2:
-				configData.outputDir = directoryInput("Enter output directory: ");
+				g_embedderSettings.outputDir = directoryInput("Enter output directory: ");
 				break;
 			case 3:
-				configData.charsPerLine = integerInput("Set new maximum (0 to disable limit): ", "", 0);
+				g_embedderSettings.charsPerLine = integerInput("Set new maximum (0 to disable limit): ", "", 0);
 				break;
 			case 4:
-				configData.countSuffix = "";
-				while (configData.countSuffix == "")
+				g_embedderSettings.countSuffix = "";
+				while (g_embedderSettings.countSuffix == "")
 				{
-					configData.countSuffix = codeElementInput("Enter new suffix (must not be blank): ", "Invalid input: ", true);
+					g_embedderSettings.countSuffix = codeElementInput("Enter new suffix (must not be blank): ", "Invalid input: ", true);
 				}
 				break;
 			case 5:
-				configData.dataSuffix = "";
-				while (configData.dataSuffix == "")
+				g_embedderSettings.dataSuffix = "";
+				while (g_embedderSettings.dataSuffix == "")
 				{
-					configData.dataSuffix = codeElementInput("Enter new suffix (must not be blank): ", "Invalid input: ", true);
+					g_embedderSettings.dataSuffix = codeElementInput("Enter new suffix (must not be blank): ", "Invalid input: ", true);
 				}
 				break;
 			case 6:
@@ -265,17 +261,37 @@ static void mainMenu()
 	}
 }
 
+static void setupDirs(std::string lastConfigPath)
+{
+	if (validatePath(lastConfigPath))
+	{
+		std::cout << "Previous embedder config found. Load?\n";
+		std::cout << "1. Yes\n";
+		std::cout << "2. No\n";
+		int loadLastConfig = integerInput("Select: ", "", 1, 2);
+
+		if (loadLastConfig == 1)
+		{
+			g_embedderSettings = chcl::JSON_Parser::ReadFile<EmbedderSettings>(lastConfigPath);
+			return;
+		}
+	}
+
+	g_embedderSettings.inputDir = directoryInput("Enter input directory: ");
+	g_embedderSettings.outputDir = directoryInput("Enter output directory: ");
+}
+
 int main(int argc, char *argv[])
 {
-	configData.inputDir = directoryInput("Enter input directory: ");
+	std::string lastConfigPath = "lastEmbedConfig.json";
+	setupDirs(lastConfigPath);
 
-	std::string configFilePath = configData.inputDir + '\\' + "embedRecords.json";
-	if (validatePath(configFilePath))
-		g_previousEmbeds = chcl::JSON_Parser::ReadFile<std::vector<EmbedConfig>>(configFilePath);
-
-	configData.outputDir = directoryInput("Enter output directory: ");
+	std::string previousEmbedsPath = g_embedderSettings.inputDir + "\\embedRecords.json";
+	if (validatePath(previousEmbedsPath))
+		g_previousEmbeds = chcl::JSON_Parser::ReadFile<std::vector<EmbedConfig>>(previousEmbedsPath);
 
 	mainMenu();
 
-	chcl::JSON_Parser::SaveToFile(configFilePath, g_previousEmbeds);
+	chcl::JSON_Parser::SaveToFile(lastConfigPath, g_embedderSettings);
+	chcl::JSON_Parser::SaveToFile(previousEmbedsPath, g_previousEmbeds);
 }

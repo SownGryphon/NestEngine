@@ -32,8 +32,6 @@ int integerInput(const std::string &prompt, const std::string &invalidPrompt, in
 	std::cout << prompt;
 	do
 	{
-		if (userInput != "")
-			std::cout << invalidPrompt;
 		std::getline(std::cin, userInput);
 		try
 		{
@@ -42,9 +40,10 @@ int integerInput(const std::string &prompt, const std::string &invalidPrompt, in
 		}
 		catch (std::invalid_argument)
 		{
+			std::cout << invalidPrompt;
 		}
 	}
-	while (numInput < min || numInput > max || userInput != "");
+	while (userInput != "" || numInput < min || numInput > max);
 	return numInput;
 }
 

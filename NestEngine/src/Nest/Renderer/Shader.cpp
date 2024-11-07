@@ -4,11 +4,15 @@
 
 #include <glad/glad.h>
 
-#include "Nest/Log/Logger.h"
+#include "Nest/Core/Core.h"
+#include "Nest/Renderer/Renderer.h"
 
 namespace Nest
 {
 	unsigned int Shader::s_currentShader = 0;
+
+	const std::string g_widthUniformName = "u_wWidth",
+		g_heightUniformName = "u_wHeight";
 
 	Shader::Shader()
 	{
@@ -17,7 +21,7 @@ namespace Nest
 
 	Shader::Shader(const ShaderSource &rawSource)
 	{
-		auto shaderSources = PreProcess(rawSource);
+		auto shaderSources = SplitSourceByType(rawSource);
 
 		m_rendererID = glCreateProgram();
 		std::vector<unsigned int> shaderIDs;
@@ -55,7 +59,7 @@ namespace Nest
 		std::unordered_map<unsigned int, ShaderSource> shaderSources;
 		for (const ShaderSource &source : rawSources)
 		{
-			auto fileShaderSources = PreProcess(source);
+			auto fileShaderSources = SplitSourceByType(source);
 			shaderSources.insert(fileShaderSources.begin(), fileShaderSources.end());
 		}
 
@@ -98,12 +102,15 @@ namespace Nest
 		return createRef<Shader>(shaderSources);
 	}
 
-	void Shader::bind() const
+	void Shader::bind()
 	{
 		if (s_currentShader != m_rendererID)
 		{
 			s_currentShader = m_rendererID;
 			glUseProgram(m_rendererID);
+
+			setUniform1ui(g_widthUniformName, Renderer::getWindowWidth());
+			setUniform1ui(g_heightUniformName, Renderer::getWindowHeight());
 		}
 	}
 
@@ -154,6 +161,11 @@ namespace Nest
 	void Shader::setUniform1i(const std::string &name, int v)
 	{
 		glUniform1i(getUniformLocation(name), v);
+	}
+
+	void Shader::setUniform1ui(const std::string &name, unsigned int v)
+	{
+		glUniform1ui(getUniformLocation(name), v);
 	}
 
 	void Shader::setUniform3fArr(const std::string &name, unsigned int count, std::vector<chcl::Vector3<float>>& arr)
@@ -226,7 +238,7 @@ namespace Nest
 		return 0;
 	}
 
-	std::unordered_map<unsigned int, Shader::ShaderSource> Shader::PreProcess(const ShaderSource &source)
+	std::unordered_map<unsigned int, Shader::ShaderSource> Shader::SplitSourceByType(const ShaderSource &source)
 	{
 		std::unordered_map<unsigned int, ShaderSource> shaderSources;
 
@@ -237,23 +249,39 @@ namespace Nest
 		{
 			size_t eol = source.content.find_first_of("\n\r", pos);
 			size_t begin = pos + typeTokenLen + 1;
-			std::string type = source.content.substr(begin, eol - begin);
+			std::string typeStr = source.content.substr(begin, eol - begin);
+			unsigned int shaderType = shaderTokenToType(typeStr);
 
 			size_t nextLineBegin = source.content.find_first_not_of("\n\r", eol);
 			pos = source.content.find(typeToken, nextLineBegin);
 
 			if (pos == std::string::npos)
 			{
-				shaderSources[shaderTokenToType(type)].content = source.content.substr(nextLineBegin);
+				shaderSources[shaderType].content = source.content.substr(nextLineBegin);
 			}
 			else
 			{
-				shaderSources[shaderTokenToType(type)].content = source.content.substr(nextLineBegin, pos - nextLineBegin);
+				shaderSources[shaderType].content = source.content.substr(nextLineBegin, pos - nextLineBegin);
 			}
-			shaderSources[shaderTokenToType(type)].name = source.name;
+			shaderSources[shaderType].name = source.name;
+			PreProcess(shaderSources[shaderType]);
 		}
 
 		return shaderSources;
+	}
+
+	void Shader::PreProcess(ShaderSource &source)
+	{
+		static const char *defaultUniformToken = "@neDefaultUniforms";
+		static const char *defaultUniformValue = "uniform uint u_wWidth;\nuniform uint u_wHeight;";
+
+		size_t defaultUniformLen = std::strlen(defaultUniformToken);
+		size_t pos = source.content.find(defaultUniformToken);
+		while (pos != std::string::npos)
+		{
+			source.content.replace(pos, defaultUniformLen, defaultUniformValue);
+			pos = source.content.find(defaultUniformToken);
+		}
 	}
 
 	unsigned int Shader::CompileShader(const ShaderSource &source, unsigned int type)

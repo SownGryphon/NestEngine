@@ -18,7 +18,7 @@ namespace Nest
 		init();
 	}
 
-	Application::Application(const std::string & windowTitle, unsigned int windowWidth, unsigned int windowHeight, bool resizable)
+	Application::Application(const std::string &windowTitle, unsigned int windowWidth, unsigned int windowHeight, bool resizable)
 	{
 		m_window = std::unique_ptr<Window>(Window::CreateWindow({ windowTitle, windowWidth, windowHeight, resizable }));
 		init();
@@ -82,6 +82,6 @@ namespace Nest
 		NE_ASSERT(!s_instance, "Can only have one application instance.");
 		s_instance = this;
 
-		Renderer::init();
+		Renderer::init(m_window->getWidth(), m_window->getHeight());
 	}
 }

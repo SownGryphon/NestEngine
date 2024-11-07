@@ -1,0 +1,7 @@
+{
+	"inputDir": "shaders",
+	"charsPerLine": 50,
+	"outputDir": "embeddedShaders",
+	"countSuffix": "_count",
+	"dataSuffix": "_data"
+}

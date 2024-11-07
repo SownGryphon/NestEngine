@@ -9,7 +9,9 @@ namespace Nest
 {
 	static chcl::Mat4 viewProjectionMatrix = chcl::Mat4::Identity();
 
-	void Renderer::init()
+	unsigned int g_windowWidth = 0, g_windowHeight = 0;
+
+	void Renderer::init(unsigned int windowWidth, unsigned int windowHeight)
 	{
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -22,6 +24,29 @@ namespace Nest
 	{
 		Renderer2D::shutdown();
 		Renderer3D::shutdown();
+	}
+
+	unsigned int Renderer::getWindowWidth()
+	{
+		return g_windowWidth;
+	}
+
+	unsigned int Renderer::getWindowHeight()
+	{
+		return g_windowHeight;
+	}
+
+	chcl::Vector2<unsigned int> Renderer::getWindowSize()
+	{
+		return { g_windowWidth, g_windowHeight };
+	}
+
+	bool Renderer::onWindowResize(WindowResizeEvent &e)
+	{
+		g_windowWidth = e.getWidth();
+		g_windowHeight = e.getHeight();
+
+		return false;
 	}
 
 	void Renderer::beginScene(const chcl::Mat4 &vpm)

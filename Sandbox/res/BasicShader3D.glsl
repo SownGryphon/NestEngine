@@ -21,7 +21,7 @@ void main()
 layout(triangles) in;
 in vec3 worldPos[];
 
-layout(location = 0, triangle_strip, max_vertices = 3) out;
+layout(triangle_strip, max_vertices = 3) out;
 
 out vec3 normal;
 
@@ -45,7 +45,7 @@ uniform float u_globalLight = 0.3;
 uniform vec4 u_color = vec4(1);
 
 in vec3 normal;
-layout(location = 0) out vec4 color;
+out vec4 color;
 
 void main()
 {

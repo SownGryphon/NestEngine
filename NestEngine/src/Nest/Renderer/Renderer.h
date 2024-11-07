@@ -1,19 +1,29 @@
 #pragma once
 
+#include <geometry/Vector2.h>
+#include <maths/Mat4.h>
+
 #include "Nest/Core/Core.h"
 
 #include "Shader.h"
 #include "VertexArray.h"
 #include "IndexBuffer.h"
 
-#include "maths/Mat4.h"
+#include "Nest/Events/WindowEvent.h"
+#include "Nest/Renderer/GraphicsAPI.h"
 
 namespace Nest
 {
 	namespace Renderer
 	{
-		void init();
+		void init(unsigned int windowWidth, unsigned int windowHeight);
 		void shutdown();
+
+		unsigned int getWindowWidth();
+		unsigned int getWindowHeight();
+		chcl::Vector2<unsigned int> getWindowSize();
+
+		bool onWindowResize(WindowResizeEvent &e);
 
 		// Sets up a scene using the rovided view projection matrix
 		void beginScene(const chcl::Mat4 &vpm);

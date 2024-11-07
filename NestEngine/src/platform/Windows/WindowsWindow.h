@@ -35,11 +35,10 @@ namespace Nest
 		struct WindowData
 		{
 			std::string title;
-			unsigned int width, height;
-			bool resizable;
+			unsigned int width = 0, height = 0;
+			bool resizable = false;
 			bool vSync = false;
 			float fps = 0.f;
-			std::chrono::high_resolution_clock::time_point lastRefresh;
 
 			EventCallbackFn eventCallback;
 		};

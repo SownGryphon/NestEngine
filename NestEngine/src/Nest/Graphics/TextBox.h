@@ -34,6 +34,9 @@ namespace Nest
 		void setText(const std::string &text);
 		void setPnt(float pnt);
 
+		inline chcl::Vector2<float> getPosition() const { return m_pos; }
+		inline float getPnt() const { return m_fontPoint; }
+
 		//inline Ref<Shader> getShader() const override { return Font::s}
 		inline Ref<Font> getFont() const { return m_font; }
 		inline Ref<VertexArray> getVA() const override { return m_textVA; }

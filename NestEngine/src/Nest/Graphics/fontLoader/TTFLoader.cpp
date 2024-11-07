@@ -285,6 +285,9 @@ void Nest::TTFLoader::processGlyf()
 			continue;
 		}
 
+		// Break at a specific glyph
+		NE_ASSERT(i != -1, "DEBUG :]");
+
 		std::vector<ContourPoint> contourPoints;
 		if (numContours > 0)
 		{
@@ -294,8 +297,6 @@ void Nest::TTFLoader::processGlyf()
 		{
 			contourPoints = std::move(readCompoundGlyph(allContourPoints));
 		}
-
-		NE_ASSERT(i != -1, "DEBUG :]");
 
 		m_result->m_glyphs.push_back({
 			xMin, yMin, xMax, yMax,
@@ -478,51 +479,53 @@ std::vector<Nest::TTFLoader::ContourPoint> Nest::TTFLoader::readSimpleGlyph(int1
 		}
 	}
 
-	if (contourPoints.size() > 1)
+	auto tryCreateMidpoint = [&contourPoints](size_t &pointIndex, const ContourPoint &p1, const ContourPoint &p2)
 	{
-		auto tryCreateMidpoint = [&contourPoints](size_t &pointIndex, const ContourPoint &p1, const ContourPoint &p2)
+		// Check if both point are on or both off the curve
+		if (~(p1.flags ^ p2.flags) & NE_ON_CURVE_BIT)
 		{
-			// Check if both point are off the curve
-			if (~(p1.flags | p2.flags) & NE_ON_CURVE_BIT)
-			{
-				ContourPoint midpoint;
-				midpoint.x = p1.x / 2 + p2.x / 2;
-				midpoint.y = p1.y / 2 + p2.y / 2;
-				// Use previous point, since that one can't be the end of a contour
-				midpoint.flags = p1.flags | NE_ON_CURVE_BIT;
-				contourPoints.insert(contourPoints.begin() + pointIndex, midpoint);
-				++pointIndex;
-			}
-		};
-
-		ContourPoint prevPoint;
-		bool newContour = true;
-		size_t contourBeginIndex = 0;
-		for (size_t i = 0; i < contourPoints.size(); ++i)
-		{
-			ContourPoint point = contourPoints[i];
-
-			if (newContour)
-			{
-				contourBeginIndex = i;
-				prevPoint = point;
-				newContour = false;
-				continue;
-			}
-
-			newContour = point.flags & NE_CONTOUR_END_BIT;
-
-			tryCreateMidpoint(i, prevPoint, point);
-
-			if (newContour)
-			{
-				++i;
-				tryCreateMidpoint(i, point, contourPoints[contourBeginIndex]);
-				--i;
-			}
-
-			prevPoint = point;
+			ContourPoint midpoint;
+			midpoint.x = p1.x / 2 + p2.x / 2;
+			midpoint.y = p1.y / 2 + p2.y / 2;
+			// Use previous point, since that one can't be the end of a contour
+			midpoint.flags = p1.flags ^ NE_ON_CURVE_BIT;
+			contourPoints.insert(contourPoints.begin() + pointIndex, midpoint);
+			++pointIndex;
 		}
+	};
+
+	size_t contourBeginIndex = 0;
+	for (size_t i = 1; i < contourPoints.size(); ++i)
+	{
+		ContourPoint point = contourPoints[i];
+
+		bool newContour = point.flags & NE_CONTOUR_END_BIT;
+
+		if (newContour)
+		{
+			contourPoints[i].flags ^= NE_CONTOUR_END_BIT;
+		}
+
+		tryCreateMidpoint(i, contourPoints[i - 1], point);
+
+		if (newContour)
+		{
+			++i;
+			tryCreateMidpoint(i, contourPoints[contourBeginIndex], point);
+
+			// Manually loop around the glyph contour
+			contourPoints.insert(contourPoints.begin() + i, contourPoints[contourBeginIndex]);
+			contourPoints[i].flags |= NE_CONTOUR_END_BIT;
+
+			// Set up the loop for the next contour
+			contourBeginIndex = i + 1;
+			++i;
+		}
+	}
+
+	for (ContourPoint &point : contourPoints)
+	{
+		point.flags &= NE_CONTOUR_END_BIT;
 	}
 
 	return contourPoints;

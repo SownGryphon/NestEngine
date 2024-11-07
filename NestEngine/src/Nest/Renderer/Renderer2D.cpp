@@ -110,7 +110,7 @@ namespace Nest
 			MVP = mvp;
 		}
 
-		RenderCommand::setDepthEnabled(false);
+		//RenderCommand::setDepthEnabled(false);
 	}
 
 	void Renderer2D::endScene()
@@ -285,6 +285,7 @@ void Nest::Renderer2D::drawText(chcl::Vector2<float> pos, float pnt, const std::
 
 	s_data->textShader->bind();
 	s_data->textShader->setUniformMat4("u_transform", transform);
+	s_data->textShader->setUniform1f("u_fuPerPx", 1.f / fUnitScale);
 
 	font->getFontBuffer()->bind();
 	s_data->textShader->bindBuffer(font->getFontBuffer(), 1);
@@ -299,6 +300,7 @@ void Nest::Renderer2D::drawTextBox(const TextBox &box)
 {
 	s_data->textShader->bind();
 	s_data->textShader->setUniformMat4("u_transform", box.getTransform());
+	s_data->textShader->setUniform1f("u_fuPerPx", box.getFont()->getUnitsPerEm() / box.getPnt());
 
 	box.getFont()->getFontBuffer()->bind();
 	s_data->textShader->bindBuffer(box.getFont()->getFontBuffer(), 1);

@@ -31,15 +31,6 @@ namespace Nest
 
 	void WindowsWindow::onUpdate()
 	{
-		if (!m_winData.vSync && m_winData.fps)
-		{
-			auto timeNow = std::chrono::high_resolution_clock::now();
-			auto sleepTime = m_winData.lastRefresh + std::chrono::nanoseconds((int) (1000000 / m_winData.fps));
-
-			if (sleepTime > timeNow)
-				std::this_thread::sleep_until(sleepTime);
-		}
-
 		glfwSwapBuffers(m_window);
 	}
 
@@ -71,6 +62,7 @@ namespace Nest
 	void WindowsWindow::setFPS(float fps)
 	{
 		m_winData.fps = fps;
+		glfwWindowHint(GLFW_REFRESH_RATE, fps);
 	}
 
 	void WindowsWindow::init(const WindowProps &props)

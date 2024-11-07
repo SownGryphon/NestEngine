@@ -5,7 +5,7 @@
 struct EmbedConfig
 {
 	std::string inFilename, outFilename, varName;
-	unsigned int charsPerLine;
+	unsigned int charsPerLine = 0;
 	std::string countSuffix, dataSuffix;
 
 	friend chcl::JSON_Stream& operator<<(chcl::JSON_Stream &stream, const EmbedConfig &record);
