@@ -32,7 +32,6 @@ in vec2 fPos;
 flat in uint symbolBegin;
 flat in uint numPoints;
 
-ivec2 fPosInt;
 int lastCrossDir = 0;
 int firstCrossDir = -2;
 
@@ -55,7 +54,7 @@ const float epsilon = 1e-4;
 
 struct FontPoint
 {
-	int packedPos;
+	vec2 pos;
 	bool contourEnd;
 };
 
@@ -71,36 +70,22 @@ bool equalEpsilon(float a, float b, float negBias, float posBias)
 	return a >= b - negBias && a <= b + posBias;
 }
 
-ivec2 unpackPos(int packedPos)
+int checkBezier(in vec2 fPoint, in vec2 pos1, in vec2 pos2, in vec2 control, bool lastContourSeg)
 {
-	int posX = packedPos & 0xffff;
-	int posY = (packedPos >> 16) & 0xffff;
-
-	// Bitwise shenanigans to make value negative
-	if ((posX & 0x8000) != 0)
-	{
-		posX |= 0xffff0000;
-	}
-	if ((posY & 0x8000) != 0)
-	{
-		posY |= 0xffff0000;
-	}
-
-	return ivec2(posX, posY);
-}
-
-int checkBezier(in ivec2 fPoint, in ivec2 pos1, in ivec2 pos2, in ivec2 control, bool lastContourSeg)
-{
-	ivec2 v1 = pos1 - control,
+	vec2 v1 = pos1 - control,
 		v2 = pos2 - control,
 		vx = fPoint - control;
+
+	vec2 a = v1 + v2;
+	vec2 b = -2.0 * v1;
+	vec2 c = v1 - vx;
 		
 	int res = 0;
 	
 	// Collinearity check
-	if (v1.x * v2.y - v2.x * v1.y == 0)
+	if (a.y == 0.0)
 	{
-		if (v1.y == 0)
+		if (v1.y == 0.0)
 			return 0;
 
 		if (vx.y > max(v1.y, v2.y))
@@ -109,90 +94,38 @@ int checkBezier(in ivec2 fPoint, in ivec2 pos1, in ivec2 pos2, in ivec2 control,
 		if (vx.y < min(v1.y, v2.y))
 			return 0;
 
-		float t = float(vx.y - v1.y) / float(v2.y - v1.y);
+		float t = (vx.y - v1.y) / (v2.y - v1.y);
 		float intersectionX = mix(v1.x, v2.x, t);
 
-		if (float(vx.x) > intersectionX)
+		if (vx.x > intersectionX)
 			return 0;
 			
 		res = int(sign(v2.y - v1.y));
 	}
-	// If the bezier curve isn't horizontal, apply a horizontal skew so it points vertically
-	else if (v1.y + v2.y != 0)
-	{
-		float k = -float(v1.x + v2.x) / float(v1.y + v2.y);
-
-		mat2 skew = mat2(1.0, 0.0, k, sign(v1.y + v2.y));
-
-		v1 = ivec2(skew * v1);
-		v2 = ivec2(skew * v2);
-		vx = ivec2(skew * vx);
-
-		int endYMin = min(v1.y, v2.y),
-			endYMax = max(v1.y, v2.y);
-
-		if (vx.y > endYMax)
-		{
-			return 0;
-		}
-
-		if (vx.x > max(v1.x, v2.x))
-		{
-			return 0;
-		}
-
-		ivec2 a = v1 + v2,
-			b = -2 * v1,
-			c = v1;
-
-		float t = float(vx.x - c.x) / float(b.x);
-		t = clamp(t, 0.0, 1.0);
-
-		float bezierY = t * (t * a.y + b.y) + c.y;
-
-		int endSlope = sign(v2.y - v1.y) * sign(v2.x - v1.x);
-
-		if (vx.y >= endYMin && (vx.y - bezierY) * endSlope >= 0)
-		{
-			int intersection = sign(pos2.y - pos1.y);
-			res += intersection;
-
-			if (vx.y == v1.y && intersection == lastCrossDir)
-			{
-				res -= intersection;
-			}
-
-			if (lastContourSeg && vx.y == v2.y && intersection == firstCrossDir)
-			{
-				res -= intersection;
-			}
-		}
-
-		if (vx.y < endYMin && vx.y > bezierY)
-		{
-			res += int(sign(pos1.x - pos2.x));
-		}
-	}
 	else
 	{
-		// If the bezier is horizontal, the intersection t is linear with respect to y
+		float intersectionT1 = (-b.y - sqrt(b.y * b.y - 4.0 * a.y * c.y)) / (2.0 * a.y);
+		float intersectionT2 = (-b.y + sqrt(b.y * b.y - 4.0 * a.y * c.y)) / (2.0 * a.y);
 
-		if (vx.y < min(v1.y, v2.y) || vx.y > max(v1.y, v2.y))
+		if (intersectionT1 >= 0.0 && intersectionT1 <= 1.0)
 		{
-			return 0;
+			float intersectionX = (intersectionT1 * a.x + b.x) * intersectionT1 + c.y;
+
+			if (vx.x <= intersectionX)
+			{
+				res += int(sign(2.0 a.y * intersectionT1 + b.y));
+			}
 		}
 
-		float t = (vx.y - v1.y) / (-2.0 * v1.y);
-
-		float bezierX = t * (t * (v1.x + v2.x) - 2.0 * v1.x) + v1.x;
-
-		if (vx.x > bezierX)
+		if (intersectionT2 >= 0.0 && intersectionT2 <= 1.0)
 		{
-			return 0;
+			float intersectionX = (intersectionT2 * a.x + b.x) * intersectionT2 + c.y;
+
+			if (vx.x <= intersectionX)
+			{
+				res += int(sign(2.0 a.y * intersectionT2 + b.y));
+			}
 		}
-
-		res = int(sign(v2.y - v1.y));
-
 	}
 
 	if (vx.y == v1.y && res == lastCrossDir)

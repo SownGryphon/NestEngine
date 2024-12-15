@@ -300,8 +300,8 @@ void Nest::TTFLoader::processGlyf()
 
 		m_result->m_glyphs.push_back({
 			xMin, yMin, xMax, yMax,
-				m_glyphHorMetrics[i].advanceWidth,
-				m_glyphHorMetrics[i].leftSideBearing,
+			m_glyphHorMetrics[i].advanceWidth,
+			m_glyphHorMetrics[i].leftSideBearing,
 			(uint32_t)allContourPoints.size(), (uint32_t)contourPoints.size()
 		});
 		allContourPoints.insert(allContourPoints.end(), contourPoints.begin(), contourPoints.end());
@@ -523,10 +523,10 @@ std::vector<Nest::TTFLoader::ContourPoint> Nest::TTFLoader::readSimpleGlyph(int1
 		}
 	}
 
-	for (ContourPoint &point : contourPoints)
-	{
-		point.flags &= NE_CONTOUR_END_BIT;
-	}
+	//for (ContourPoint &point : contourPoints)
+	//{
+	//	point.flags &= NE_CONTOUR_END_BIT;
+	//}
 
 	return contourPoints;
 }
@@ -604,8 +604,8 @@ std::vector<Nest::TTFLoader::ContourPoint> Nest::TTFLoader::readCompoundGlyph(st
 				childIndex = m_fontFile.readInt<uint8_t>();
 			}
 
-			xOff = contourPoints[parentIndex].x - (componentPointBeg + childIndex)->x;
-			yOff = contourPoints[parentIndex].y - (componentPointBeg + childIndex)->y;
+			xOff = int16_t(contourPoints[parentIndex].x - (componentPointBeg + childIndex)->x);
+			yOff = int16_t(contourPoints[parentIndex].y - (componentPointBeg + childIndex)->y);
 
 			//xOff = (componentPointBeg + childIndex)->x;
 			//yOff = (componentPointBeg + childIndex)->y;
@@ -650,7 +650,7 @@ std::vector<Nest::TTFLoader::ContourPoint> Nest::TTFLoader::readCompoundGlyph(st
 			float xTemp = xScale * tempPoint.x + scale10 * tempPoint.y + yOff,
 				yTemp = scale01 * tempPoint.x + yScale * tempPoint.y + yOff;
 
-			contourPoints.push_back({ int16_t(xTemp), int16_t(yTemp), tempPoint.flags });
+			contourPoints.push_back({ xTemp, yTemp, tempPoint.flags });
 		}
 	}
 

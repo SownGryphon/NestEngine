@@ -13,8 +13,11 @@ namespace Nest
 
 	void Renderer::init(unsigned int windowWidth, unsigned int windowHeight)
 	{
+		g_windowWidth = windowWidth;
+		g_windowHeight = windowHeight;
+
 		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		Renderer2D::init();
 		Renderer3D::init();

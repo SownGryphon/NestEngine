@@ -81,7 +81,8 @@ namespace Nest
 
 			s_data->texturedQuadShader = createRef<Shader>(Shader::ShaderSource{ glslTexQuad_data, "Textured Quad" });
 
-			s_data->textShader = createRef<Shader>(Shader::ShaderSource{ glslFont_data, "Font" });
+			//s_data->textShader = createRef<Shader>(Shader::ShaderSource{ glslFont_data, "Font" });
+			s_data->textShader = Shader::FromFile("res\\shaders\\FontTest3.glsl");
 		}
 	}
 

@@ -14,8 +14,9 @@ namespace Nest
 		unsigned int width, height;
 		bool resizable;
 
-		WindowProps(const std::string &title = "Nest Engine", unsigned int width = 1280, unsigned int height = 720, bool resizable = false)
-			: title(title), width(width), height(height), resizable(resizable) {}
+		WindowProps(const std::string &title = "Nest Engine", unsigned int width = 1280, unsigned int height = 720, bool resizable = false) :
+			title(title), width(width), height(height), resizable(resizable)
+		{}
 	};
 
 	class Window
@@ -37,7 +38,7 @@ namespace Nest
 		virtual void setFPS(float fps) = 0;
 		virtual void* getNativeWindow() = 0;
 
-		static Window* CreateWindow(const WindowProps &props = WindowProps());
+		static Window* Create(const WindowProps &props = WindowProps());
 	};
 
 }

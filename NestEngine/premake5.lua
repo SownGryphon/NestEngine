@@ -22,6 +22,7 @@ project "NestEngine"
 		"src",
 		"res",
 		"../vendor/CHCL/CHCL/src",
+		"../vendor/OpenGL/include",
 		"../vendor/GLFW/include",
 		"../vendor/Glad/include"
 	}
@@ -29,7 +30,6 @@ project "NestEngine"
 	links
 	{
 		"CHCL",
-		"GLFW",
 		"Glad",
 		"opengl32.lib"
 	}

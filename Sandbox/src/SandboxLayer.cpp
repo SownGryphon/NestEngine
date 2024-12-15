@@ -13,7 +13,7 @@ SandboxLayer::SandboxLayer()
 
 	Nest::ECS::Entity sprite1, sprite2, sprite3, sprite4, sprite5;
 	Nest::ECS::SpriteComponent &spriteComp = Nest::ECS::SpriteComponent::Get();
-	spriteComp.attachToEntity(sprite1, { tex1, chcl::Vector2<float>(180, 200), 1.0f, 0.f });
+	spriteComp.attachToEntity(sprite1, { tex1, chcl::Vector2<float>(180, 200), 0.4f, 0.f });
 	spriteComp.attachToEntity(sprite2, { tex2, chcl::Vector2<float>(180, 500), 0.4f, 0.f });
 	spriteComp.attachToEntity(sprite3, { tex3, chcl::Vector2<float>(400, 200), 4.f, 0.f });
 	spriteComp.attachToEntity(sprite4, { tex4, chcl::Vector2<float>(400, 350), 4.f, 0.f });
@@ -25,12 +25,12 @@ SandboxLayer::SandboxLayer()
 	m_scene.addEntity(std::move(sprite4));
 	m_scene.addEntity(std::move(sprite5));
 
-	//m_scene.addSystem(Nest::ECS::SpriteSystem::Create());
+	m_scene.addSystem(Nest::ECS::SpriteSystem::Create());
 
 	//m_testFont = Nest::TTFLoader("res\\Fonts\\OpenSans\\OpenSans-Regular.ttf").get();
 	//m_testFont = Nest::TTFLoader("res\\Fonts\\Arial\\ARIAL.TTF").get();
-	m_testFont = Nest::TTFLoader("res\\Fonts\\Arial\\ARIALBD.TTF").get();
-	//m_testFont = Nest::TTFLoader("res\\Fonts\\Wingdings\\wingding.ttf").get();
+	//m_testFont = Nest::TTFLoader("res\\Fonts\\Arial\\ARIALBD.TTF").get();
+	m_testFont = Nest::TTFLoader("res\\Fonts\\Wingdings\\wingding.ttf").get();
 
 	std::string loremIpsum = R"(Lorem ipsum dolor sit amet,
 consectetur adipiscing elit,
@@ -39,13 +39,14 @@ ut labore et dolore magna aliqua.)";
 
 	Nest::ECS::Entity box1, box2;
 	Nest::ECS::TextBoxComp &textBoxComp = Nest::ECS::TextBoxComp::Get();
-	textBoxComp.attachToEntity(box1, { chcl::Vector2<float>(600, 450), "(*^*)ia", 100.f, m_testFont });
+	textBoxComp.attachToEntity(box1, {chcl::Vector2<float>(30, 250), "IV H", 400.f, m_testFont});
 	textBoxComp.attachToEntity(box2, { chcl::Vector2<float>(600, 350), loremIpsum, 20.f, m_testFont });
 
-	m_scene.addEntity(std::move(box1));
 	m_scene.addEntity(std::move(box2));
+	m_scene.addEntity(std::move(box1));
 
-	//m_scene.addSystem(Nest::ECS::TextBoxSystem::Create());
+	m_scene.addSystem(Nest::ECS::TextBoxSystem::Create());
+	glClearColor(0.5, 0.5f, 0.5f, 1.f);
 }
 
 void SandboxLayer::onAttach()
@@ -58,13 +59,18 @@ void SandboxLayer::onDetach()
 
 void SandboxLayer::onUpdate(std::chrono::milliseconds timestep)
 {
+	//Nest::ECS::SpriteComponent &spriteComp = Nest::ECS::SpriteComponent::Get();
+	//auto &movingSprite = spriteComp.getData(m_scene.m_entities[0]);
+	//movingSprite.pos.x += 0.05f * timestep.count();
+	//if (movingSprite.pos.x > 800.f)
+	//	movingSprite.pos.x = 200.f;
 	Nest::RenderCommand::clear();
 	
 	Nest::Renderer2D::beginScene(m_camera.getVPM());
 
 	m_scene.update();
 
-	static MovingAverage fpsAverage{ 200 };
+	static MovingAverage fpsAverage{ 20 };
 
 	if (timestep.count() > 0)
 		fpsAverage.add(1000.f / float(timestep.count()));
@@ -82,7 +88,11 @@ void SandboxLayer::onUpdate(std::chrono::milliseconds timestep)
 	}
 
 	static Nest::Formatter fpsFormat;
-	//Nest::Renderer2D::drawText({ 1100, 700 }, 20, fpsFormat.format("FPS: {:.0}", fpsAverage.get()), m_testFont);
+	Nest::Renderer2D::drawText({ 1100, 700 }, 20, fpsFormat.format("FPS: {:.0}", fpsAverage.get()), m_testFont);
+
+	//static float totalTime = 0.f;
+	//totalTime += timestep.count() * 0.001;
+	//Nest::Renderer2D::drawText({ 30, 250 }, 400.f + std::sinf(totalTime / 2.f) * 50.f, "12345", m_testFont);
 }
 
 void SandboxLayer::onEvent(Nest::Event & e)

@@ -48,9 +48,9 @@ Nest::Ref<Nest::VertexArray> Nest::Font::generateVertexArray(const std::string &
 			// Vertex window y
 			vbData.push_back<float>((yMin ? glyph.yMin : glyph.yMax) + yOff);
 			// Vertex fUnit x
-			vbData.push_back<int16_t>(xMin ? glyph.xMin : glyph.xMax);
+			vbData.push_back<float>(xMin ? glyph.xMin : glyph.xMax);
 			// Vertex fUnit y
-			vbData.push_back<int16_t>(yMin ? glyph.yMin : glyph.yMax);
+			vbData.push_back<float>(yMin ? glyph.yMin : glyph.yMax);
 
 			vbData.push_back<uint32_t>(glyph.contourBegin);
 			vbData.push_back<uint32_t>(glyph.numContourPoints);
@@ -99,10 +99,10 @@ Nest::Ref<Nest::VertexBufferLayout> Nest::Font::getLayout()
 	if (!s_VBLayout.get())
 	{
 		s_VBLayout = createRef<VertexBufferLayout>();
-		s_VBLayout->push<float>(2);
-		s_VBLayout->push<int16_t>(2);
-		s_VBLayout->push<int32_t>(1);
-		s_VBLayout->push<int32_t>(1);
+		s_VBLayout->push<float>(2);		// Vertex (x,y)
+		s_VBLayout->push<float>(2);		// Vertex glyph (x,y) in f-units
+		s_VBLayout->push<uint32_t>(1);	// Offset to glyph beginning
+		s_VBLayout->push<uint32_t>(1);	// Number of points in contour
 		//s_VBLayout->push<int32_t>(1, DataType::None, true, 4);
 		//s_VBLayout->push<int32_t>(1, DataType::None, true, 4);
 	}

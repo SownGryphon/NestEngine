@@ -26,11 +26,11 @@ namespace Nest
 		void onEvent(Event &e);
 		bool onWindowClose(WindowCloseEvent &e);
 
-		inline Window& getWindow() { return *m_window; }
+		inline Window& getWindow() { return *m_windowHandle; }
 		static Application& GetInstance() { return *s_instance; }
 
 	private:
-		std::unique_ptr<Window> m_window;
+		Scope<Window> m_windowHandle;
 		bool m_running = true;
 		LayerStack m_layerStack;
 

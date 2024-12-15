@@ -28,8 +28,8 @@ namespace Nest
 
 		struct ContourPoint
 		{
-			int16_t x = 0, y = 0;
-			uint32_t flags = 0;
+			float x = 0.f, y = 0.f;
+			int32_t flags = 0;
 		};
 
 		struct GlyphHorMetrics

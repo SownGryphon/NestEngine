@@ -5,21 +5,21 @@
 #include "SandboxLayer.h"
 #include "SandboxLayer3D.h"
 
-class Sandbox : public Nest::Application
+class SandboxApp : public Nest::Application
 {
 public:
-	Sandbox() :
+	SandboxApp() :
 		Application("Sandbox Example", 1280, 720)
 	{
-		getWindow().setVSync(true);
-		getWindow().setVSync(false);
-		getWindow().setFPS(20);
+		//getWindow().setVSync(true);
+		//getWindow().setVSync(false);
+		getWindow().setFPS(60);
 		//pushLayer(new ProfileLayer());
 		pushLayer(new SandboxLayer());
 		//pushLayer(new SandboxLayer3D());
 	}
 
-	~Sandbox()
+	~SandboxApp()
 	{
 
 	}
@@ -27,5 +27,5 @@ public:
 
 Nest::Application* Nest::createApplication()
 {
-	return new Sandbox();
+	return new SandboxApp();
 }

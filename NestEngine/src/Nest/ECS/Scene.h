@@ -23,7 +23,6 @@ namespace Nest::ECS
 		void addEntity(size_t count);
 		inline void addEntity(Entity &&e) { m_entities.emplace_back(std::move(e)); }
 
-
 		inline void addSystem(System &s) { m_systems.emplace_back(s); }
 		inline void addSystem(System &&s) { m_systems.emplace_back(std::move(s)); }
 

@@ -2,8 +2,6 @@
 
 #include <unordered_map>
 
-#include <GLFW/glfw3.h>
-
 #include "Nest/Core/Core.h"
 #include "Nest/Core/Input.h"
 
@@ -37,7 +35,7 @@ namespace Nest
 		virtual chcl::Vector2<float> getCursorPosImpl() override;
 		inline virtual chcl::Vector2<float> getCursorMovementImpl() override { return getCursorPosImpl() - m_lastCursorPos; }
 
-		GLFWwindow* getWindow();
+		//GLFWwindow* getWindow();
 
 		bool onKeyPressEvent(KeyPressedEvent &e);
 		bool onMousePressEvent(MouseButtonPressedEvent &e);

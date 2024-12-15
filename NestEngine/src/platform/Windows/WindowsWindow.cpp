@@ -1,9 +1,15 @@
 #include "WindowsWindow.h"
 
-#include <thread>
+#include <chrono>
+#include <codecvt>
 #include <iostream>
+#include <thread>
 
-#include <glad/glad.h>
+#include <glad/gl.h>
+#include <glad/wgl.h>
+
+#include "platform/Windows/WindowsUtils.h"
+#include "platform/Windows/PlatformWindows.h"
 
 #include "Nest/Events/WindowEvent.h"
 #include "Nest/Events/MouseEvent.h"
@@ -11,168 +17,222 @@
 
 namespace Nest
 {
-	static bool s_GLFWInitialized = false;
+    static bool s_GLFWInitialized = false;
 
-	WindowsWindow::WindowsWindow(const WindowProps &props)
-	{
-		init(props);
-	}
+    WindowsWindow::WindowsWindow(const WindowProps &props)
+    {
+        init(props);
+    }
 
-	WindowsWindow::~WindowsWindow()
-	{
-		Window::~Window();
-		shutdown();
-	}
+    WindowsWindow::~WindowsWindow()
+    {
+        shutdown();
+        Window::~Window();
+    }
 
-	void Nest::WindowsWindow::processEvents()
-	{
-		glfwPollEvents();
-	}
+    void Nest::WindowsWindow::processEvents()
+    {
+        MSG windowMessage;
+        while (PeekMessage(&windowMessage, m_windowHandle, NULL, NULL, PM_REMOVE))
+        {
+            if (windowMessage.message == WM_QUIT)
+            {
+                NE_TRACE("Encountered quit message");
+                break;
+            }
 
-	void WindowsWindow::onUpdate()
-	{
-		glfwSwapBuffers(m_window);
-	}
+            TranslateMessage(&windowMessage);
+            DispatchMessage(&windowMessage);
+        }
+    }
 
-	unsigned int WindowsWindow::getWidth() const
-	{
-		return m_winData.width;
-	}
+    void WindowsWindow::onUpdate()
+    {
+        auto timeNow = std::chrono::high_resolution_clock::now();
+        std::chrono::nanoseconds frameTime = std::chrono::nanoseconds(int(1'000'000'000 / m_winData.fps));
+        if (m_winData.fps != 0 && timeNow - m_lastFrameTime < frameTime)
+        {
+            m_lastFrameTime += frameTime;
+            std::this_thread::sleep_until(m_lastFrameTime);
+        }
+        else
+            m_lastFrameTime = timeNow;
+        UpdateWindow(m_windowHandle);
+        SwapBuffers(m_winData.deviceContext);
+    }
 
-	unsigned int WindowsWindow::getHeight() const
-	{
-		return m_winData.height;
-	}
+    unsigned int WindowsWindow::getWidth() const
+    {
+        return m_winData.width;
+    }
 
-	void WindowsWindow::setVSync(bool enabled)
-	{
-		if (enabled)
-			glfwSwapInterval(1);
-		else
-			glfwSwapInterval(0);
+    unsigned int WindowsWindow::getHeight() const
+    {
+        return m_winData.height;
+    }
 
-		m_winData.vSync = enabled;
-	}
+    void WindowsWindow::setVSync(bool enabled)
+    {
+        m_winData.vSync = enabled;
+    }
 
-	bool WindowsWindow::isVSync() const
-	{
-		return m_winData.vSync;
-	}
+    bool WindowsWindow::isVSync() const
+    {
+        return m_winData.vSync;
+    }
 
-	void WindowsWindow::setFPS(float fps)
-	{
-		m_winData.fps = fps;
-		glfwWindowHint(GLFW_REFRESH_RATE, fps);
-	}
+    void WindowsWindow::setFPS(float fps)
+    {
+        m_winData.fps = fps;
+    }
 
-	void WindowsWindow::init(const WindowProps &props)
-	{
-		m_winData.width = props.width;
-		m_winData.height = props.height;
-		m_winData.title = props.title;
-		m_winData.resizable = props.resizable;
+    void WindowsWindow::init(const WindowProps &props)
+    {
+        m_winData.width = props.width;
+        m_winData.height = props.height;
+        m_winData.title = props.title;
+        m_winData.resizable = props.resizable;
 
-		if (!s_GLFWInitialized)
-		{
-			int success = glfwInit();
-			NE_ASSERT(success == GLFW_TRUE, "GLFW init failed.");
+        s_windowClass.lpfnWndProc = WindowsWindow::WindowProc;
+        s_windowClass.hInstance = PlatformWindows::s_instanceHandle;
+        s_windowClass.lpszClassName = s_windowClassName.c_str();
 
-			s_GLFWInitialized = true;
-		}
+        RegisterClass(&s_windowClass);
 
-		glfwSetErrorCallback([](int code, const char *message) {
-			NE_ERROR("[GL ERROR {0}]: {1}", code, message);
-		});
+        std::wstring wideWindowName = WindowsUtils::toWstring(m_winData.title);
+        m_windowHandle = CreateWindowEx(
+            0,
+            s_windowClassName.c_str(),
+            wideWindowName.c_str(),
+            WS_OVERLAPPEDWINDOW,
+            CW_USEDEFAULT, CW_USEDEFAULT,
+            m_winData.width,
+            m_winData.height,
+            NULL,
+            NULL,
+            PlatformWindows::s_instanceHandle,
+            &m_winData
+        );
 
-		glfwWindowHint(GLFW_RESIZABLE, m_winData.resizable ? GLFW_TRUE : GLFW_FALSE);
-		m_window = glfwCreateWindow(props.width, props.height, props.title.c_str(), NULL, NULL);
-		glfwMakeContextCurrent(m_window);
-		glfwSetWindowUserPointer(m_window, &m_winData);
+        if (m_windowHandle == NULL)
+        {
+            NE_ERROR("Failed to create window");
+            return;
+        }
 
-		NE_INFO("Created window {0} of size [{1}, {2}].", props.title, props.width, props.height);
+        ShowWindow(m_windowHandle, SW_SHOWDEFAULT);
+        UpdateWindow(m_windowHandle);
 
-		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-		NE_ASSERT(status, "GLAD init failed.");
+        NE_INFO("Created window {0} of size [{1}, {2}].", props.title, props.width, props.height);
 
-		setVSync(true);
+        m_lastFrameTime = std::chrono::high_resolution_clock::time_point();
+    }
 
-		glfwSetWindowCloseCallback(m_window, [](GLFWwindow *window)
-		{
-			WindowData &data = *(WindowData*)glfwGetWindowUserPointer(window);
-			WindowCloseEvent closeEvent;
-			data.eventCallback(closeEvent);
-		});
+    void WindowsWindow::shutdown()
+    {
+        if (m_winData.deviceContext && m_winData.openglRenderContext)
+        {
+            wglMakeCurrent(m_winData.deviceContext, NULL);
+            wglDeleteContext(m_winData.openglRenderContext);
+        }
+    }
 
-		glfwSetKeyCallback(m_window, [](GLFWwindow *window, int key, int, int action, int)
-		{
-			WindowData &data = *(WindowData*)glfwGetWindowUserPointer(window);
-			switch (action)
-			{
-				case GLFW_PRESS:
-				{
-					KeyPressedEvent pressEvent(key, 0);
-					data.eventCallback(pressEvent);
-					return;
-				}
-				case GLFW_REPEAT:
-				{
-					KeyPressedEvent repeatEvent(key, 1);
-					data.eventCallback(repeatEvent);
-					return;
-				}
-				case GLFW_RELEASE:
-				{
-					KeyReleasedEvent releaseEvent(key);
-					data.eventCallback(releaseEvent);
-					return;
-				}
-			}
-		});
+    LRESULT CALLBACK WindowsWindow::WindowProc(HWND windowHandle, UINT uMsg, WPARAM wParam, LPARAM lParam)
+    {
+        switch (uMsg)
+        {
+            case WM_CREATE:
+            {
+                NE_TRACE("Received window create message [{}]", uMsg);
 
-		glfwSetMouseButtonCallback(m_window, [](GLFWwindow *window, int button, int action, int)
-		{
-			WindowData &data = *(WindowData*)glfwGetWindowUserPointer(window);
-			switch (action)
-			{
-				case GLFW_PRESS:
-				{
-					MouseButtonPressedEvent pressEvent(button);
-					data.eventCallback(pressEvent);
-					return;
-				}
-				case GLFW_RELEASE:
-				{
-					MouseButtonReleasedEvent releaseEvent(button);
-					data.eventCallback(releaseEvent);
-					return;
-				}
-			}
-		});
+                // Set user data for window
+                CREATESTRUCT *createStructPtr = (CREATESTRUCT*)lParam;
+                WindowData *winDataPtr = (WindowData*)createStructPtr->lpCreateParams;
+                SetWindowLongPtr(windowHandle, GWLP_USERDATA, (LONG_PTR)winDataPtr);
 
-		glfwSetCursorPosCallback(m_window, [](GLFWwindow *window, double mouseX, double mouseY)
-		{
-			WindowData &data = *(WindowData*)glfwGetWindowUserPointer(window);
-			MouseMovedEvent moveEvent((float)mouseX, (float)mouseY);
-			data.eventCallback(moveEvent);
-		});
+                // Create OpenGL Context
+                PIXELFORMATDESCRIPTOR pixelFormatDesc =
+                {
+                    sizeof(PIXELFORMATDESCRIPTOR),
+                    1,
+                    PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,	// Flags
+                    PFD_TYPE_RGBA,	// Framebuffer type, RGBA or palette
+                    32,				// Colordepth
+                    0, 0, 0, 0, 0, 0,
+                    0,
+                    0,
+                    0,
+                    0, 0, 0, 0,
+                    24,	// number of bits for depth buffer
+                    8,	// Number of bits for stencil buffer
+                    0,	// Number of aux bits
+                    PFD_MAIN_PLANE,
+                    0,
+                    0, 0, 0
+                };
 
-		glfwSetScrollCallback(m_window, [](GLFWwindow *window, double dx, double dy)
-		{
-			WindowData &data = *(WindowData*)glfwGetWindowUserPointer(window);
-			MouseScrolledEvent scrollEvent((float)dx, (float)dy);
-			data.eventCallback(scrollEvent);
-		});
-	}
+                HDC deviceContext = GetDC(windowHandle);
 
-	void WindowsWindow::shutdown()
-	{
-		glfwDestroyWindow(m_window);
-	}
+                int pixelFormat = ChoosePixelFormat(deviceContext, &pixelFormatDesc);
+                SetPixelFormat(deviceContext, pixelFormat, &pixelFormatDesc);
 
-	#ifdef NE_PLATFORM_WINDOWS
-	Window* Window::CreateWindow(const WindowProps &props)
-	{
-		return new WindowsWindow(props);
-	}
-	#endif
+                HGLRC openglRenderContext = wglCreateContext(deviceContext);
+                wglMakeCurrent(deviceContext, openglRenderContext);
+
+                winDataPtr->deviceContext = deviceContext;
+                winDataPtr->openglRenderContext = openglRenderContext;
+
+                // Load OpenGL and WGL
+                int openGlVersion = gladLoaderLoadGL();
+                NE_INFO("GLAD loaded OpenGL version {}.{}", GLAD_VERSION_MAJOR(openGlVersion), GLAD_VERSION_MINOR(openGlVersion));
+                int wglVersion = gladLoaderLoadWGL(deviceContext);
+                NE_INFO("Glad loaded WGL version {}.{}", GLAD_VERSION_MAJOR(wglVersion), GLAD_VERSION_MINOR(wglVersion));
+
+                return 0;
+            }	// WM_CREATE
+
+            case WM_PAINT:
+            {
+                PAINTSTRUCT paintStruct;
+                HDC hdc = BeginPaint(windowHandle, &paintStruct);
+
+                //FillRect(hdc, &paintStruct.rcPaint, (HBRUSH)(COLOR_WINDOW + 1));
+
+                EndPaint(windowHandle, &paintStruct);
+                return 0;
+            }	// WM_PAINT
+
+            case WM_CLOSE:
+            {
+                DestroyWindow(windowHandle);
+                return 0;
+            }	// WM_CLOSE
+
+            case WM_DESTROY:
+            {
+                PostQuitMessage(0);
+
+                WindowData &winData = GetAttachedWindowData(windowHandle);
+                WindowCloseEvent closeEvent;
+                winData.eventCallback(closeEvent);
+
+                return 0;
+            }
+        }
+
+        return DefWindowProc(windowHandle, uMsg, wParam, lParam);;
+    }
+
+    WindowsWindow::WindowData& WindowsWindow::GetAttachedWindowData(HWND windowHandle)
+    {
+        LONG_PTR userDataPtr = GetWindowLongPtr(windowHandle, GWLP_USERDATA);
+        return *(WindowData*)userDataPtr;
+    }
+
+    #ifdef NE_PLATFORM_WINDOWS
+    Nest::Window* Nest::Window::Create(const WindowProps &props)
+    {
+        return new WindowsWindow(props);
+    }
+    #endif
 }

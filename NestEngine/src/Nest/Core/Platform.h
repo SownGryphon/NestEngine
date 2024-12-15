@@ -4,11 +4,11 @@
 
 namespace Nest
 {
-	class GraphicsAPI
+	class Platform
 	{
 	public:
 		virtual void init() = 0;
-
-		inline static Ref<GraphicsAPI> s_nestGraphicsAPI;
+		
+		static Nest::Ref<Nest::Platform> s_nestPlatform;
 	};
 }

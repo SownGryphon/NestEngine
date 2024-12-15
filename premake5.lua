@@ -5,8 +5,8 @@ workspace "NestEngine"
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 include "vendor/CHCL/CHCL"
-include "vendor/GLFW"
 include "vendor/Glad"
+include "vendor/GLFW"
 include "NestEngine"
 
 project "NestGLSLEmbedder"
@@ -74,7 +74,6 @@ project "Sandbox"
 	links
 	{
 		"CHCL",
-		"GLFW",
 		"Glad",
 		"opengl32.lib",
 		"NestEngine"

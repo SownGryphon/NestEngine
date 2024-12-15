@@ -4,6 +4,10 @@
 
 #include <glad/glad.h>
 
+#include "Nest/Core/Core.h"
+
+#include "Nest/Renderer/GraphicsAPI.h"
+
 #include "Nest/renderer/Renderer.h"
 #include "Nest/Utils/Time.h"
 #include "Nest/Core/Input.h"
@@ -14,13 +18,13 @@ namespace Nest
 
 	Application::Application()
 	{
-		m_window = std::unique_ptr<Window>(Window::CreateWindow());
+		m_windowHandle = Scope<Window>(Window::Create());
 		init();
 	}
 
 	Application::Application(const std::string &windowTitle, unsigned int windowWidth, unsigned int windowHeight, bool resizable)
 	{
-		m_window = std::unique_ptr<Window>(Window::CreateWindow({ windowTitle, windowWidth, windowHeight, resizable }));
+		m_windowHandle = Scope<Window>(Window::Create({ windowTitle, windowWidth, windowHeight, resizable }));
 		init();
 	}
 
@@ -42,12 +46,12 @@ namespace Nest
 		{
 			auto now = Time::getTimeMillis();
 
-			m_window->processEvents();
+			m_windowHandle->processEvents();
 
 			for (Layer *layer : m_layerStack)
 				layer->onUpdate(now - lastStepTime);
 
-			m_window->onUpdate();
+			m_windowHandle->onUpdate();
 
 			Input::Clear();
 
@@ -78,10 +82,10 @@ namespace Nest
 
 	void Application::init()
 	{
-		m_window->setEventCallback(NE_BIND_EVENT_FN(Application::onEvent));
+		m_windowHandle->setEventCallback(NE_BIND_EVENT_FN(Application::onEvent));
 		NE_ASSERT(!s_instance, "Can only have one application instance.");
 		s_instance = this;
 
-		Renderer::init(m_window->getWidth(), m_window->getHeight());
+		Renderer::init(m_windowHandle->getWidth(), m_windowHandle->getHeight());
 	}
 }
